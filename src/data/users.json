@@ -1,0 +1,14 @@
+[
+    {
+        "username": "student",
+        "password": "pass",
+        "type": "student",
+        "name": "Jose Rizal"
+    },
+    {
+        "username": "org",
+        "password": "pass",
+        "type": "org",
+        "name": "Data Club"
+    }
+]

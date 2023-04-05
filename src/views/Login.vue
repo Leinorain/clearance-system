@@ -11,14 +11,14 @@
                 <div class="col-sm-12 col-lg-4">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <form @submit.prevent="onLogin">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username / ID Num</label>
-                                    <input type="text" class="form-control" id="username">
+                                    <input type="text" class="form-control" id="username" v-model="username">
                                 </div>
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="text" class="form-control">
+                                    <input type="password" class="form-control" id="password" v-model="password">
                                 </div>
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-success btn-lg">Login</button>
@@ -31,3 +31,23 @@
         </div>
     </div>
 </template>
+<script setup>
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import router from '@/plugins/router'
+
+const auth = useAuthStore()
+
+const username = ref('')
+const password = ref('')
+
+async function onLogin() {
+    try {
+        await auth.login(username.value, password.value)
+        console.log('login success')
+        router.push({ name: 'home' })
+    } catch(e) {
+        console.error(e)
+    }
+}
+</script>

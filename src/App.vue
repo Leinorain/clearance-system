@@ -4,10 +4,10 @@
     </div>
 </template>
 <script setup>
-import { onMounted } from 'vue';
-import router from './plugins/router';
+// import { onMounted } from 'vue'
+// import router from '@/plugins/router'
 
-onMounted(() => {
-    router.push({ name: 'login' })
-})
+// onMounted(() => {
+//     router.push({ name: 'login' })
+// })
 </script>
