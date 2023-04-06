@@ -14,7 +14,7 @@
                         <a href="#" class="nav-link">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">Logout</a>
+                        <a class="nav-link" @click="onLogout">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -23,3 +23,20 @@
     <div class="pt-5 pb-2"></div>
     <router-view></router-view>
 </template>
+<script setup>
+import { useAuthStore } from '@/stores/auth'
+import router from '@/plugins/router'
+
+const auth = useAuthStore()
+
+async function onLogout() {
+    try {
+        await auth.logout()
+        console.log('logout success')
+        router.push({ name: 'login' })
+    } catch(e) {
+        // TODO: show error messages
+        console.error(e)
+    }
+}
+</script>
