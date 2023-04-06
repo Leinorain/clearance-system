@@ -1,11 +1,15 @@
 <template>
     <Header name="Firstname Lastname"></Header>
     <div class="container mt-2">
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
+        <div class="row g-2">
+            <div
+                v-for="org in orgs"
+                :id="org.id"
+                class="col-sm-12 col-md-6">
                 <OrgCard
-                    name="Data Club"
-                    thumbnail="https://mdbootstrap.com/img/new/avatars/8.jpg"
+                    :id="org.id"
+                    :name="org.name"
+                    :thumbnail="org.thumbnail"
                     is-approved>
                 </OrgCard>
             </div>
@@ -15,4 +19,5 @@
 <script setup>
 import Header from '@/components/Header.vue'
 import OrgCard from '@/components/OrgCard.vue'
+import orgs from '@/data/student-orgs'
 </script>

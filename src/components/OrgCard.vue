@@ -15,6 +15,7 @@
 </template>
 <script setup>
 const props = defineProps({
+    id: String,
     name: String,
     thumbnail: String,
     isApproved: Boolean

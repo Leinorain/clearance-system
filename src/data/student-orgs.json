@@ -1,0 +1,17 @@
+[
+    {
+        "id": "eeb612fe-b57b-4f2b-ba86-7d0788947643",
+        "name": "Data Club",
+        "thumbnail": "https://dummyimage.com/45x45/0400ff/fff.png&text=DATA"
+    },
+    {
+        "id": "6c957a13-8429-46ad-a714-a38ce2cbe3fe",
+        "name": "IT Department",
+        "thumbnail": "https://dummyimage.com/45x45/f26464/fff.png&text=IT"
+    },
+    {
+        "id": "24363d24-ba61-4df8-8afa-83404c4e1aac",
+        "name": "Finance",
+        "thumbnail": "https://dummyimage.com/45x45/27e65d/fff.png&text=$$$"
+    }
+]
