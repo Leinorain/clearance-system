@@ -47,6 +47,7 @@ async function onLogin() {
         console.log('login success')
         router.push({ name: 'home' })
     } catch(e) {
+        // TODO: show error messages
         console.error(e)
     }
 }

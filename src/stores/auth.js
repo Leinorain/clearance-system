@@ -7,6 +7,9 @@ export const useAuthStore = defineStore('auth', {
         isLoggedIn: (state) => Boolean(state.user)
     },
     actions: {
+        async checkIsLoggedIn() {
+            return this.isLoggedIn
+        },
         async login(username, password) {
             const user = this.users.find(
                 u => u.username === username && u.password === password
