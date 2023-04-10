@@ -33,19 +33,19 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-import router from '@/plugins/router'
+import { signInWithEmailAndPassword } from '@firebase/auth'
+import { useFirebaseStore } from '@/stores/firebase'
 
-const auth = useAuthStore()
+const firebase = useFirebaseStore()
+const auth = firebase.getAuth()
 
 const username = ref('')
 const password = ref('')
 
 async function onLogin() {
     try {
-        await auth.login(username.value, password.value)
+        await signInWithEmailAndPassword(auth, username.value, password.value)
         console.log('login success')
-        router.push({ name: 'home' })
     } catch(e) {
         // TODO: show error messages
         console.error(e)

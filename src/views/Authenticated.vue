@@ -24,16 +24,15 @@
     <router-view></router-view>
 </template>
 <script setup>
-import { useAuthStore } from '@/stores/auth'
-import router from '@/plugins/router'
+import { signOut } from '@firebase/auth'
+import { useFirebaseStore } from '@/stores/firebase'
 
-const auth = useAuthStore()
+const firebase = useFirebaseStore()
+const auth = firebase.getAuth()
 
 async function onLogout() {
     try {
-        await auth.logout()
-        console.log('logout success')
-        router.push({ name: 'login' })
+        await signOut(auth)
     } catch(e) {
         // TODO: show error messages
         console.error(e)

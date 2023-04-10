@@ -1,5 +1,5 @@
 <template>
-    <Header name="Firstname Lastname"></Header>
+    <Header :name="auth.userDisplayName"></Header>
     <div class="container mt-2">
         <div class="row g-2">
             <div
@@ -20,4 +20,7 @@
 import Header from '@/components/Header.vue'
 import OrgCard from '@/components/OrgCard.vue'
 import orgs from '@/data/student-orgs'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
 </script>

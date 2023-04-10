@@ -28,10 +28,10 @@ const router = createRouter({
     history: createWebHistory()
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach((to, from) => {
     const auth = useAuthStore()
 
-    if(to.meta.requiresAuth && !(await auth.checkIsLoggedIn())) {
+    if(to.meta.requiresAuth && !auth.isLoggedIn) {
         return { name: 'login' }
     }
 })
