@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { doc, collection, query, where, getDoc, getDocs } from 'firebase/firestore'
 import { useAuthStore } from '@/stores/auth'
 import { useFirebaseStore } from '@/stores/firebase'
+import { useErrorsStore } from '@/stores/errors'
 
 function getDb() {
     const firebase = useFirebaseStore()
@@ -13,7 +14,6 @@ export const useOrgStore = defineStore('org', {
         orgIds: [],
         isOrgIdsLoading: false,
         orgData: {},
-        orgDataErrors: {},
         loadingOrgData: {}
     }),
     actions: {
@@ -47,7 +47,11 @@ export const useOrgStore = defineStore('org', {
 
                 this.orgData[id] = { id, ...snapshot.data() }
             } catch(e) {
-                this.orgDataErrors[id] = e
+                console.error(e)
+                const errors = useErrorsStore()
+                errors.add(`Cannot load organization: ${e.message}`)
+                // remove org id from orgIds
+                this.orgIds.splice(this.orgIds.indexOf(id), 1)
             } finally {
                 this.loadingOrgData[id] = false
             }

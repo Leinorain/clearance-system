@@ -25,7 +25,6 @@ import { computed } from 'vue'
 const props = defineProps({
     id: String,
     data: Object,
-    error: Object,
     isLoading: Boolean
 })
 

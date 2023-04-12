@@ -14,7 +14,6 @@
                 <OrgCard
                     :id="orgId"
                     :data="org.orgData[orgId]"
-                    :error="org.orgDataErrors[orgId]"
                     :isLoading="org.loadingOrgData[orgId]">
                 </OrgCard>
             </div>
