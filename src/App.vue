@@ -5,24 +5,35 @@
         </div>
         <div v-else class="d-flex justify-content-center align-items-center min-vh-100">
             <div class="spinner-grow text-success" role="status">
-                <span class="visually-hidden">Loading...</span> 
+                <span class="visually-hidden">Loading...</span>
             </div>
             <div class="spinner-grow text-success" role="status">
-                <span class="visually-hidden">Loading...</span> 
+                <span class="visually-hidden">Loading...</span>
             </div>
             <div class="spinner-grow text-success" role="status">
-                <span class="visually-hidden">Loading...</span> 
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <ErrorToast
+            v-for="(value, key) in errors.errors"
+            :key="key"
+            :message="value"
+            @hidden="errors.remove(key)">
+        </ErrorToast>
     </div>
 </template>
 <script setup>
 import { ref } from 'vue'
+import ErrorToast from '@/components/ErrorToast.vue'
 import { onAuthStateChanged } from '@firebase/auth'
+import { useErrorsStore } from '@/stores/errors'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useAuthStore } from '@/stores/auth'
 import router from '@/plugins/router'
 
+const errors = useErrorsStore()
 const firebase = useFirebaseStore()
 const auth = useAuthStore()
 
@@ -30,7 +41,7 @@ const checkedAuth = ref(false)
 
 onAuthStateChanged(firebase.getAuth(), (user) => {
     checkedAuth.value = true
-    if(user) {
+    if (user) {
         auth.user = user
         router.push({ name: 'home' })
     } else {

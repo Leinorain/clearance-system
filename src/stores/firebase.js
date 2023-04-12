@@ -27,7 +27,9 @@ export const useFirebaseStore = defineStore('firebase', {
             if(!this.auth) {
                 this.auth = getAuth(this.getApp())
                 if(import.meta.env.DEV) {
-                    connectAuthEmulator(this.auth, 'http://localhost:9099')
+                    connectAuthEmulator(this.auth, 'http://localhost:9099', {
+                        disableWarnings: true
+                    })
                 }
             }
             return this.auth

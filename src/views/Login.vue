@@ -21,7 +21,13 @@
                                     <input type="password" class="form-control" id="password" v-model="password">
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-success btn-lg">Login</button>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success btn-lg"
+                                        :disabled="isLoggingIn">
+                                        <span v-if="isLogginIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                        Login
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -35,20 +41,26 @@
 import { ref } from 'vue'
 import { signInWithEmailAndPassword } from '@firebase/auth'
 import { useFirebaseStore } from '@/stores/firebase'
+import { useErrorsStore } from '@/stores/errors';
 
+const errors = useErrorsStore()
 const firebase = useFirebaseStore()
 const auth = firebase.getAuth()
 
 const username = ref('')
 const password = ref('')
+const isLogginIn = ref(false)
 
 async function onLogin() {
+    isLogginIn.value = true
     try {
         await signInWithEmailAndPassword(auth, username.value, password.value)
         console.log('login success')
     } catch(e) {
-        // TODO: show error messages
+        errors.add('Login failed.')
         console.error(e)
+    } finally {
+        isLogginIn.value = false
     }
 }
 </script>
