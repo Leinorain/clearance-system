@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { initializeApp } from 'firebase/app'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 const firebaseConfig = {
     apiKey: "AIzaSyDcjwlWtio9ukBeEinJ3yz25eGbcuqeK6w",
@@ -14,7 +15,7 @@ const firebaseConfig = {
 };
 
 export const useFirebaseStore = defineStore('firebase', {
-    state: () => ({ app: null, auth: null }),
+    state: () => ({ app: null, auth: null, firestore: null }),
     actions: {
         getApp() {
             if(!this.app) {
@@ -30,6 +31,15 @@ export const useFirebaseStore = defineStore('firebase', {
                 }
             }
             return this.auth
+        },
+        getFirestore() {
+            if(!this.firestore) {
+                this.firestore = getFirestore(this.getApp())
+                if(import.meta.env.DEV) {
+                    connectFirestoreEmulator(this.firestore, 'localhost', 8080)
+                }
+            }
+            return this.firestore
         }
     }
 })
