@@ -25,7 +25,7 @@
                                         type="submit"
                                         class="btn btn-success btn-lg"
                                         :disabled="isLoggingIn">
-                                        <span v-if="isLogginIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                        <span v-if="isLoggingIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                         Login
                                     </button>
                                 </div>
@@ -49,10 +49,10 @@ const auth = firebase.getAuth()
 
 const username = ref('')
 const password = ref('')
-const isLogginIn = ref(false)
+const isLoggingIn = ref(false)
 
 async function onLogin() {
-    isLogginIn.value = true
+    isLoggingIn.value = true
     try {
         await signInWithEmailAndPassword(auth, username.value, password.value)
         console.log('login success')
@@ -60,7 +60,7 @@ async function onLogin() {
         errors.add('Login failed.')
         console.error(e)
     } finally {
-        isLogginIn.value = false
+        isLoggingIn.value = false
     }
 }
 </script>
