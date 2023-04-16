@@ -2,7 +2,11 @@
     <div class="container pt-2">
         <div class="d-flex align-items-center mb-2">
             <h1 class="me-auto">School Years</h1>
-            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#newSchoolYearModal">New School Year</button>
+            <button
+                class="btn btn-primary btn-lg"
+                @click="showCreateModal = true">
+                New School Year
+            </button>
         </div>
         <div class="container">
             <table class="table table-hover">
@@ -29,7 +33,8 @@
                                 type="button"
                                 class="btn btn-sm"
                                 :class="{'btn-danger': !schoolYear.current, 'btn-secondary': schoolYear.current}"
-                                @click="askToDelete(index)">
+                                @click="askToDelete(index)"
+                                :disabled="schoolYear.current">
                                 Del
                             </button>
                         </td>
@@ -38,108 +43,49 @@
             </table>
         </div>
     </div>
-    <div class="modal fade" tabindex="-1" id="newSchoolYearModal">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New School Year</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        :disabled="isCreatingNewSchoolYear">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="schoolYearInput" class="form-label">School Year</label>
-                            <input type="text" class="form-control" id="schoolYearInput" v-model="newSchoolYear">
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="setAsCurrentCheckbox" v-model="newSchoolYearCurrent">
-                            <label for="setAsCurrentCheckbox" class="form-check-label">Set as current</label>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                        :disabled="isCreatingNewSchoolYear">
-                        Close
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-primary"
-                        :disabled="isCreatingNewSchoolYear"
-                        @click="createNewSchoolYear">
-                        <span v-if="isCreatingNewSchoolYear" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                        Save
-                    </button>
-                </div>
+    <Modal
+        title="New School Year"
+        action-label="Save"
+        action-class="btn-primary"
+        v-model="showCreateModal"
+        @action="createNewSchoolYear">
+        <form>
+            <div class="mb-3">
+                <label for="schoolYearInput" class="form-label">School Year</label>
+                <input type="text" class="form-control" id="schoolYearInput" v-model="newSchoolYear">
             </div>
-        </div>
-    </div>
-    <div class="modal fade" tabindex="-1" id="deleteSchoolYearModal">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete School Year</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        :disabled="isDeletingSchoolYear">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete the School Year: {{ syToDelete }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                        :disabled="isDeletingSchoolYear">
-                        Close
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-danger"
-                        :disabled="isDeletingSchoolYear"
-                        @click="deleteSchoolYear">
-                        <span v-if="isDeletingSchoolYear" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                        Delete
-                    </button>
-                </div>
+            <div class="form-check">
+                <input type="checkbox" id="setAsCurrentCheckBox" class="form-check-input" v-model="newSchoolYearCurrent">
+                <label for="setAsCurrentCheckBox" class="form-check-label">Set as current</label>
             </div>
-        </div>
-    </div>
+        </form>
+    </Modal>
+    <Modal
+        title="Delete School Year"
+        action-label="Delete"
+        action-class="btn-danger"
+        v-model="showDeleteModal"
+        @action="deleteSchoolYear">
+        <p>Are you sure you want to delete the School Year: {{ syToDelete }}?</p>
+    </Modal>
 </template>
 <script setup>
-// TODO: refactor modals
-import { Modal } from 'bootstrap'
 import { ref, onMounted, computed } from 'vue'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import { useErrorsStore } from '@/stores/errors'
+import Modal from '@/components/Modal.vue'
 
 const errors = useErrorsStore()
 const schoolYears = useSchoolYearsStore()
 
-let isLoadingData = ref(false)
+const isLoadingData = ref(false)
 const data = ref([])
 
-let newSchoolYearModal = null
-const isCreatingNewSchoolYear = ref(false)
+const showCreateModal = ref(false)
 const newSchoolYear = ref('')
 const newSchoolYearCurrent = ref(false)
 
-let deleteSchoolYearModal = null
-const isDeletingSchoolYear = ref(false)
+const showDeleteModal = ref(false)
 const indexToDelete = ref(-1)
 const syToDelete = computed(() => {
     return indexToDelete.value > -1 ? data.value[indexToDelete.value].id : ''
@@ -155,29 +101,21 @@ onMounted(async () => {
     } finally {
         isLoadingData.value = false
     }
-
-    newSchoolYearModal = new Modal('#newSchoolYearModal')
-    deleteSchoolYearModal = new Modal('#deleteSchoolYearModal')
 })
 
-function closeNewSchoolYearModal() {
-    if(newSchoolYearModal) {
-        newSchoolYear.value = ''
-        newSchoolYearCurrent.value = false
-        newSchoolYearModal.hide()
-    }
-}
-
-async function createNewSchoolYear() {
+async function createNewSchoolYear($event) {
     let previousSyIdx = data.value.findIndex(sy => sy.current)
-    isCreatingNewSchoolYear.value = true
+
     try {
         const sy = await schoolYears.createSchoolYear({
             id: newSchoolYear.value,
             current: newSchoolYearCurrent.value
         })
         data.value.push(sy)
-        closeNewSchoolYearModal()
+        $event.close()
+
+        newSchoolYear.value = ''
+        newSchoolYearCurrent.value = false
 
         if(sy.current && previousSyIdx > -1) {
             const previousSy = data.value[previousSyIdx]
@@ -188,32 +126,29 @@ async function createNewSchoolYear() {
             data.value[previousSyIdx] = updatedSy
         }
     } catch(e) {
+        $event.error()
         console.error(e)
         errors.add(`Cannot create new school year: ${e.message}`)
-    } finally {
-        isCreatingNewSchoolYear.value = false
     }
 }
 
 function askToDelete(idx) {
     indexToDelete.value = idx
-    deleteSchoolYearModal.show()
+    showDeleteModal.value = true
 }
 
-async function deleteSchoolYear() {
+async function deleteSchoolYear($event) {
     if(indexToDelete.value > -1) {
-        isDeletingSchoolYear.value = true
         try {
             const sy = data.value[indexToDelete.value]
             await schoolYears.deleteSchoolYear(sy.id)
             data.value.splice(indexToDelete.value, 1)
             indexToDelete.value = -1
-            deleteSchoolYearModal.hide()
+            $event.close()
         } catch(e) {
+            $event.error()
             console.error(e)
             errors.add(`Cannot delete school year: ${e.message}`)
-        } finally {
-            isDeletingSchoolYear.value = false
         }
     }
 }

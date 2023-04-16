@@ -10,7 +10,6 @@ function getDb() {
 export const useSchoolYearsStore = defineStore('schoolYear', {
     actions: {
         async createSchoolYear({ id, current }) {
-            console.log(id, current)
             const db = getDb()
             await setDoc(doc(db, 'school_years', id), { current })
             return { id, current }
