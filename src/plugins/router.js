@@ -6,6 +6,11 @@ const authenticatedRoutes = [
         path: '',
         name: 'home',
         component: () => import('@/views/Home.vue')
+    },
+    {
+        path: '/school-year',
+        name: 'school-year',
+        component: () => import('@/views/SchoolYear.vue')
     }
 ]
 
@@ -34,6 +39,10 @@ router.beforeEach((to, from) => {
     if(to.meta.requiresAuth && !auth.isLoggedIn) {
         return { name: 'login' }
     }
+
+    // if(to.meta.requiresSystemAdmin && !auth.isSystemAdmin) {
+    //     return { name: 'home' }
+    // }
 })
 
 export default router

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { query, collection, where, getDocs } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
-import { useErrorsStore } from '@/stores/errors'
 
 export const useStudentStore = defineStore('student', {
     state: () => ({ info: null, isInitialized: false }),
