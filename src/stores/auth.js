@@ -11,7 +11,8 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         isLoggedIn: (state) => Boolean(state.user),
-        userDisplayName: (state) => state.user ? state.user.displayName : 'User'
+        userDisplayName: (state) => state.user && state.user.displayName
+            ? state.user.displayName : 'User'
     },
     actions: {
         async checkIfAdmin() {
