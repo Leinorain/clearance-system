@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { collection, doc, setDoc, getDocs, deleteDoc } from 'firebase/firestore'
+import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 
 function getDb() {
@@ -18,6 +18,12 @@ export const useSchoolYearsStore = defineStore('schoolYear', {
             const db = getDb()
             const docs = await getDocs(collection(db, 'school_years'))
             return docs.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        },
+        async setCurrent(id, current) {
+            const db = getDb()
+            const ref = doc(db, 'school_years', id)
+            await updateDoc(ref, { current })
+            return { id, current }
         },
         async deleteSchoolYear(id) {
             const db = getDb()

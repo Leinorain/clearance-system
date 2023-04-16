@@ -26,7 +26,8 @@
                                 type="button"
                                 class="btn btn-sm"
                                 :class="{'btn-primary': !schoolYear.current, 'btn-secondary': schoolYear.current}"
-                                :disabled="schoolYear.current">
+                                :disabled="schoolYear.current"
+                                @click="askToSetCurrent(index)">
                                 Set
                             </button>
                             <button
@@ -61,6 +62,14 @@
         </form>
     </Modal>
     <Modal
+        title="Set Current School Year"
+        action-label="Yes"
+        action-class="btn-primary"
+        v-model="showSetCurrentModal"
+        @action="setSchoolYearToCurrent">
+        <p>Are you sure you want to set {{ syToSetCurrent }} as the current School Year?</p>
+    </Modal>
+    <Modal
         title="Delete School Year"
         action-label="Delete"
         action-class="btn-danger"
@@ -85,6 +94,12 @@ const showCreateModal = ref(false)
 const newSchoolYear = ref('')
 const newSchoolYearCurrent = ref(false)
 
+const showSetCurrentModal = ref(false)
+const indexToSetCurrent = ref(-1)
+const syToSetCurrent = computed(() => {
+    return indexToSetCurrent.value > -1 ? data.value[indexToSetCurrent.value].id : ''
+})
+
 const showDeleteModal = ref(false)
 const indexToDelete = ref(-1)
 const syToDelete = computed(() => {
@@ -102,6 +117,16 @@ onMounted(async () => {
         isLoadingData.value = false
     }
 })
+
+function askToSetCurrent(idx) {
+    indexToSetCurrent.value = idx
+    showSetCurrentModal.value = true
+}
+
+function askToDelete(idx) {
+    indexToDelete.value = idx
+    showDeleteModal.value = true
+}
 
 async function createNewSchoolYear($event) {
     let previousSyIdx = data.value.findIndex(sy => sy.current)
@@ -132,9 +157,27 @@ async function createNewSchoolYear($event) {
     }
 }
 
-function askToDelete(idx) {
-    indexToDelete.value = idx
-    showDeleteModal.value = true
+async function setSchoolYearToCurrent($event) {
+    let previousSyIdx = data.value.findIndex(sy => sy.current)
+
+    try {
+        const syToUpdate = data.value[indexToSetCurrent.value]
+        const newCurrentSy = await schoolYears.setCurrent(syToUpdate.id, true)
+        data.value[indexToSetCurrent.value] = newCurrentSy
+        indexToSetCurrent.value = -1
+
+        if(previousSyIdx > -1) {
+            const previousSy = data.value[previousSyIdx]
+            const newPrevSy = await schoolYears.setCurrent(previousSy.id, false)
+            data.value[previousSyIdx] = newPrevSy
+        }
+
+        $event.close()
+    } catch(e) {
+        $event.error()
+        console.error(e)
+        errors.add(`Cannot set current school year: ${e.message}`)
+    }
 }
 
 async function deleteSchoolYear($event) {
