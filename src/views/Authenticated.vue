@@ -54,7 +54,6 @@ const auth = useAuthStore()
 const navbarToggle = ref(null)
 
 function navigate(to) {
-    console.log(router.currentRoute)
     router.push(to)
     const toggle = new Collapse(navbarToggle.value)
     toggle.hide()
