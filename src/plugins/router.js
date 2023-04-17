@@ -8,6 +8,11 @@ const authenticatedRoutes = [
         component: () => import('@/views/Home.vue')
     },
     {
+        path: '/students',
+        name: 'students',
+        component: () => import('@/views/Students.vue')
+    },
+    {
         path: '/school-year',
         name: 'school-year',
         component: () => import('@/views/SchoolYear.vue')

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { doc, collection, query, where, getDoc, getDocs } from 'firebase/firestore'
 import { useAuthStore } from '@/stores/auth'
 import { useFirebaseStore } from '@/stores/firebase'
-import { useStudentStore } from '@/stores/student'
+import { useStudentsStore } from '@/stores/students'
 import { useErrorsStore } from '@/stores/errors'
 
 function getDb() {
@@ -51,7 +51,7 @@ export const useOrgStore = defineStore('org', {
             }
         },
         async loadStudentOrgs(userId, db) {
-            const studentStore = useStudentStore()
+            const studentStore = useStudentsStore()
             this.isOrgIdsLoading = true
 
             try {
