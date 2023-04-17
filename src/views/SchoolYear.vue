@@ -53,10 +53,10 @@
         <form>
             <div class="mb-3">
                 <label for="schoolYearInput" class="form-label">School Year</label>
-                <input type="text" class="form-control" id="schoolYearInput" v-model="newSchoolYear">
+                <input type="text" class="form-control" id="schoolYearInput" v-model="newSchoolYear.id">
             </div>
             <div class="form-check">
-                <input type="checkbox" id="setAsCurrentCheckBox" class="form-check-input" v-model="newSchoolYearCurrent">
+                <input type="checkbox" id="setAsCurrentCheckBox" class="form-check-input" v-model="newSchoolYear.current">
                 <label for="setAsCurrentCheckBox" class="form-check-label">Set as current</label>
             </div>
         </form>
@@ -83,6 +83,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import { useErrorsStore } from '@/stores/errors'
 import Modal from '@/components/Modal.vue'
+import makeReactive from '@/util/makeReactive'
 
 const errors = useErrorsStore()
 const schoolYears = useSchoolYearsStore()
@@ -91,8 +92,11 @@ const isLoadingData = ref(false)
 const data = ref([])
 
 const showCreateModal = ref(false)
-const newSchoolYear = ref('')
-const newSchoolYearCurrent = ref(false)
+const {
+    data: newSchoolYear,
+    reset: resetNewSchoolYear,
+    unwrap: unwrapNewSchoolYear
+} = makeReactive({ id: '', current: false })
 
 const showSetCurrentModal = ref(false)
 const indexToSetCurrent = ref(-1)
@@ -132,15 +136,11 @@ async function createNewSchoolYear($event) {
     let previousSyIdx = data.value.findIndex(sy => sy.current)
 
     try {
-        const sy = await schoolYears.createSchoolYear({
-            id: newSchoolYear.value,
-            current: newSchoolYearCurrent.value
-        })
+        const sy = await schoolYears.createSchoolYear(unwrapNewSchoolYear())
         data.value.push(sy)
         $event.close()
 
-        newSchoolYear.value = ''
-        newSchoolYearCurrent.value = false
+        resetNewSchoolYear()
 
         if(sy.current && previousSyIdx > -1) {
             const previousSy = data.value[previousSyIdx]
