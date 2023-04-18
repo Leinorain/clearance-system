@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { doc, collection, query, where, getDoc, getDocs } from 'firebase/firestore'
+import { doc, collection, query, where, addDoc, getDoc, getDocs, deleteDoc } from 'firebase/firestore'
 import { useAuthStore } from '@/stores/auth'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useStudentsStore } from '@/stores/students'
@@ -24,6 +24,15 @@ export const useOrgStore = defineStore('org', {
         loadingOrgData: {}
     }),
     actions: {
+        async createOrg(name) {
+            const db = getDb()
+            const col = collection(db, 'organizations')
+            const orgRef = await addDoc(col, { name })
+            const org = { id: orgRef.id, name }
+            this.orgData[org.id] = org
+            this.orgIds.push(org.id)
+            return org
+        },
         async loadCurrentUserOrgs() {
             this.$reset()
             const db = getDb()
@@ -88,6 +97,10 @@ export const useOrgStore = defineStore('org', {
             } finally {
                 this.loadingOrgData[id] = false
             }
+        },
+        async deleteOrg(id) {
+            const db = getDb()
+            await deleteDoc(doc(db, 'organizations', id))
         }
     }
 })
