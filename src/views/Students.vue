@@ -35,7 +35,7 @@
                             <button
                                 class="btn btn-sm btn-danger"
                                 @click="askToDelete(index)">
-                                Del
+                                <i class="bi bi-x-circle-fill"></i>
                             </button>
                         </td>
                     </tr>

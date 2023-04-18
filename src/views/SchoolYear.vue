@@ -28,7 +28,7 @@
                                 :class="{'btn-primary': !schoolYear.current, 'btn-secondary': schoolYear.current}"
                                 :disabled="schoolYear.current"
                                 @click="askToSetCurrent(index)">
-                                Set
+                                <i class="bi bi-check-circle-fill"></i>
                             </button>
                             <button
                                 type="button"
@@ -36,7 +36,7 @@
                                 :class="{'btn-danger': !schoolYear.current, 'btn-secondary': schoolYear.current}"
                                 @click="askToDelete(index)"
                                 :disabled="schoolYear.current">
-                                Del
+                                <i class="bi bi-x-circle-fill"></i>
                             </button>
                         </td>
                     </tr>
