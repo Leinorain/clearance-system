@@ -1,9 +1,10 @@
-import { defineStore } from 'pinia'
-import { doc, collection, query, where, addDoc, getDoc, getDocs, deleteDoc } from 'firebase/firestore'
-import { useAuthStore } from '@/stores/auth'
+import { defineStore, acceptHMRUpdate } from 'pinia'
+import { doc, collection, query, documentId, where, addDoc, getDoc, getDocs, deleteDoc } from 'firebase/firestore'
+import { useRolesStore } from '@/stores/roles'
 import { useFirebaseStore } from '@/stores/firebase'
-import { useStudentsStore } from '@/stores/students'
 import { useErrorsStore } from '@/stores/errors'
+import chunkArray from '@/util/chunkArray'
+import normalizeDoc from '@/util/normalizeDoc'
 
 function getDb() {
     const firebase = useFirebaseStore()
@@ -19,9 +20,8 @@ function handleError(e, message) {
 export const useOrgStore = defineStore('org', {
     state: () => ({
         orgIds: [],
-        isOrgIdsLoading: false,
         orgData: {},
-        loadingOrgData: {}
+        isOrgsLoading: false
     }),
     actions: {
         async createOrg(name) {
@@ -35,68 +35,47 @@ export const useOrgStore = defineStore('org', {
         },
         async loadCurrentUserOrgs() {
             this.$reset()
+            const roles = useRolesStore()
+
+            try {
+                this.isOrgsLoading = true
+                if(roles.isSysAdmin) {
+                    await this.loadAllOrgs()
+                } else {
+                    await this.loadStudentOrgs(roles)
+                }
+            } catch(e) {
+                handleError(e, `Cannot load organizations: ${e.message}`)
+            } finally {
+                this.isOrgsLoading = false
+            }
+        },
+        async loadAllOrgs() {
             const db = getDb()
-            const auth = useAuthStore()
-
-            if(await auth.checkIfAdmin()) {
-                await this.loadAllOrgs(db)
-            } else {
-                await this.loadStudentOrgs(auth.user.uid, db)
-            }
+            const docs = await getDocs(collection(db, 'organizations'))
+            docs.forEach(doc => {
+                const orgId = doc.id
+                this.orgIds.push(orgId)
+                this.orgData[orgId] = normalizeDoc(doc)
+            })
         },
-        async loadAllOrgs(db) {
-            this.isOrgIdsLoading = true
-            try {
-                const docs = await getDocs(collection(db, 'organizations'))
-                docs.forEach(doc => {
-                    const orgId = doc.id
-                    this.orgIds.push(orgId)
-                    this.orgData[orgId] = { id: orgId, ...doc.data() }
-                })
-            } catch(e) {
-                handleError(e, `Cannot load organizations: ${e.message}`)
-            } finally {
-                this.isOrgIdsLoading = false
-            }
+        async loadStudentOrgs(roles) {
+            const db = getDb()
+            const orgIds = roles.studentRoles.map(role => role.organizationId)
+            const chunkedOrgIds = chunkArray(orgIds, 10)
+            const promises = chunkedOrgIds.map(orgIds => this.loadStudentOrgsById(db, orgIds))
+            await Promise.all(promises)
         },
-        async loadStudentOrgs(userId, db) {
-            const studentStore = useStudentsStore()
-            this.isOrgIdsLoading = true
+        async loadStudentOrgsById(db, orgIds) {
+            const orgs = collection(db, 'organizations')
+            const q = query(orgs, where(documentId(), 'in', orgIds))
 
-            try {
-                const student = await studentStore.getStudentInfo(userId)
-                if(student) {
-                    const orgs = collection(db, 'organizations_students')
-                    const q = query(orgs, where('studentId', '==', student.id))
-                    const docs = await getDocs(q)
-
-                    this.orgIds = docs.docs.map(doc => doc.data().orgId)
-                    this.orgIds.forEach(id => this.loadOrg(id, db))
-                }
-            } catch(e) {
-                handleError(e, `Cannot load organizations: ${e.message}`)
-            } finally {
-                this.isOrgIdsLoading = false
-            }
-        },
-        async loadOrg(id, db) {
-            const ref = doc(db, 'organizations', id)
-
-            this.loadingOrgData[id] = true
-            try {
-                const snapshot = await getDoc(ref)
-                if(!snapshot.exists()) {
-                    throw new Error('Organization does not exist')
-                }
-
-                this.orgData[id] = { id, ...snapshot.data() }
-            } catch(e) {
-                handleError(e, `Cannot load organization: ${e.message}`)
-                // remove org id from orgIds
-                this.orgIds.splice(this.orgIds.indexOf(id), 1)
-            } finally {
-                this.loadingOrgData[id] = false
-            }
+            const docs = await getDocs(q)
+            docs.forEach(doc => {
+                const org = normalizeDoc(doc)
+                this.orgIds.push(org.id)
+                this.orgData[org.id] = org
+            })
         },
         async deleteOrg(id) {
             const db = getDb()
@@ -104,3 +83,7 @@ export const useOrgStore = defineStore('org', {
         }
     }
 })
+
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useOrgStore, import.meta.hot))
+}

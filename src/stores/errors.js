@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid/non-secure'
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 
 export const useErrorsStore = defineStore('errors', {
     state: () => ({ errors: {} }),
@@ -12,3 +12,7 @@ export const useErrorsStore = defineStore('errors', {
         }
     }
 })
+
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useErrorsStore, import.meta.hot))
+}

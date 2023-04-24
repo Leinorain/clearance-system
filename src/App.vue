@@ -31,20 +31,26 @@ import { onAuthStateChanged } from '@firebase/auth'
 import { useErrorsStore } from '@/stores/errors'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useAuthStore } from '@/stores/auth'
+import { useRolesStore } from '@/stores/roles'
 import router from '@/plugins/router'
 
 const errors = useErrorsStore()
 const firebase = useFirebaseStore()
 const auth = useAuthStore()
+const roles = useRolesStore()
 
 const checkedAuth = ref(false)
 
-onAuthStateChanged(firebase.getAuth(), (user) => {
+onAuthStateChanged(firebase.getAuth(), async (user) => {
     checkedAuth.value = true
     if (user) {
         auth.user = user
+        // TODO: role init error handling
+        await roles.initializeUserRoles()
+        await roles.initializeStudentRoles()
         router.push({ name: 'home' })
     } else {
+        roles.$reset()
         auth.$reset()
         router.push({ name: 'login' })
     }

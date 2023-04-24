@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 import { doc, query, orderBy, collection, where, setDoc, getDocs, deleteDoc } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 
@@ -45,3 +45,7 @@ export const useStudentsStore = defineStore('student', {
         }
     }
 })
+
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useStudentsStore, import.meta.hot))
+}

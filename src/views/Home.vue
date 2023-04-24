@@ -11,7 +11,7 @@
         </button>
     </div>
     <div class="container mt-2">
-        <div v-if="org.isOrgIdsLoading" class="d-flex justify-content-center pt-3">
+        <div v-if="org.isOrgsLoading" class="d-flex justify-content-center pt-3">
             <div class="spinner-grow" role="status">
                 <span class="visually-hidden">Loading...</span> 
             </div>
@@ -49,8 +49,7 @@
                 class="col-sm-12 col-md-6">
                 <OrgCard
                     :id="orgId"
-                    :data="org.orgData[orgId]"
-                    :isLoading="org.loadingOrgData[orgId]">
+                    :data="org.orgData[orgId]">
                 </OrgCard>
             </div>
         </div>

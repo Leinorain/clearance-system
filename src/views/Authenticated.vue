@@ -12,10 +12,10 @@
                             class="nav-link"
                             :class="{active: $route.name === 'home'}"
                             @click="navigate({name: 'home'})">
-                            {{ auth.isSystemAdmin ? 'Courses' : 'Home' }}
+                            {{ roles.isSysAdmin ? 'Organizations' : 'Home' }}
                         </a>
                     </li>
-                    <li v-if="auth.isSystemAdmin" class="nav-item">
+                    <li v-if="roles.isSysAdmin" class="nav-item">
                         <a
                             class="nav-link"
                             :class="{active: $route.name === 'students'}"
@@ -23,7 +23,7 @@
                             Students
                         </a>
                     </li>
-                    <li v-if="auth.isSystemAdmin" class="nav-item">
+                    <li v-if="roles.isSysAdmin" class="nav-item">
                         <a
                             class="nav-link"
                             :class="{active: $route.name === 'school-year'}"
@@ -45,11 +45,11 @@
 import { ref } from 'vue'
 import { Collapse } from 'bootstrap'
 import { signOut } from '@firebase/auth'
-import { useAuthStore } from '@/stores/auth'
+import { useRolesStore } from '@/stores/roles'
 import { useFirebaseStore } from '@/stores/firebase'
 import router from '@/plugins/router'
 
-const auth = useAuthStore()
+const roles = useRolesStore()
 
 const navbarToggle = ref(null)
 
