@@ -80,15 +80,15 @@
                                     <form @submit.prevent="onLogin">
                                         <div class="mb-3">
                                             <label for="email_Register" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email_Register" v-model="email_Register"> 
+                                            <input type="email" class="form-control" id="email_Register" v-model="registerEmail"> 
                                         </div>
                                         <div class="mb-3">
                                             <label for="password_Register" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password_Register" v-model="password_Register"> 
+                                            <input type="password" class="form-control" id="password_Register" v-model="registerPassword"> 
                                         </div>
                                         <div class="mb-3">
                                             <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="confirmPassword_Register"> 
+                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="registerConfirmPassword"> 
                                         </div>
                                         <div class="d-grid">
                                             <button
@@ -165,15 +165,15 @@
                                 <form @submit.prevent="onLogin">
                                     <div class="mb-3">
                                         <label for="email_Register" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email_Register" v-model="email_Register"> <!-- id -->
+                                        <input type="email" class="form-control" id="email_Register" v-model="registerEmail"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
                                         <label for="password_Register" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password_Register" v-model="password_Register"> <!-- id -->
+                                        <input type="password" class="form-control" id="password_Register" v-model="registerPassword"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
                                         <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="confirmPassword_Register"> <!-- id -->
+                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="registerConfirmPassword"> <!-- id -->
                                     </div>
                                     <div class="d-grid">
                                         <button
@@ -241,9 +241,9 @@
 
     const username = ref('')
     const password = ref('')
-    const email_Register = ref('')
-    const password_Register = ref('')
-    const confirmPassword_Register = ref('')
+    const registerEmail = ref('')
+    const registerPassword = ref('')
+    const registerConfirmPassword = ref('')
     const isLoggingIn = ref(false)
 
     async function onLogin() {
