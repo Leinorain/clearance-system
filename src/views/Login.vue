@@ -79,16 +79,16 @@
                                 <div class="tab-pane fade" id="registerTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
                                     <form @submit.prevent="onLogin">
                                         <div class="mb-3">
-                                            <label for="username" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email_Register" v-model="username"> 
+                                            <label for="email_Register" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="email_Register" v-model="email_Register"> 
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password_Register" v-model="password"> 
+                                            <label for="password_Register" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="password_Register" v-model="password_Register"> 
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">Confirm Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="password"> 
+                                            <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="confirmPassword_Register"> 
                                         </div>
                                         <div class="d-grid">
                                             <button
@@ -118,7 +118,7 @@
                         <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link active" id="faq_tab_1-tab" data-bs-toggle="tab"
-                                    data-bs-target="#loginTab" type="button" role="tab" aria-controls="faq_tab_1"
+                                    data-bs-target="#loginTabMobile" type="button" role="tab" aria-controls="faq_tab_1"
                                     aria-selected="true">
                                     <div class="d-flex flex-column lh-lg">
                                         <i class="bi bi-person"></i>
@@ -128,7 +128,7 @@
                             </li>
                             <li class="nav-item"> 
                                 <button class="nav-link" id="faq_tab_4-tab"
-                                    data-bs-toggle="tab" data-bs-target="#registerTab" type="button" role="tab"
+                                    data-bs-toggle="tab" data-bs-target="#registerTabMobile" type="button" role="tab"
                                     aria-controls="faq_tab_4" aria-selected="false">
 
                                     <div class="d-flex flex-column lh-lg"> 
@@ -140,7 +140,7 @@
                         </ul>
 
                         <div class="tab-content mt-3" id="myTabContent">
-                            <div class="tab-pane fade active show" id="loginTab" role="tabpanel" aria-labelledby="faq_tab_1-tab">
+                            <div class="tab-pane fade active show" id="loginTabMobile" role="tabpanel" aria-labelledby="faq_tab_1-tab">
                                 <form @submit.prevent="onLogin">
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username / ID Num</label>
@@ -161,19 +161,19 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="tab-pane fade" id="registerTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
+                            <div class="tab-pane fade" id="registerTabMobile" role="tabpanel" aria-labelledby="faq_tab_4-tab">
                                 <form @submit.prevent="onLogin">
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email_Register" v-model="username"> <!-- id -->
+                                        <label for="email_Register" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email_Register" v-model="email_Register"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password_Register" v-model="password"> <!-- id -->
+                                        <label for="password_Register" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password_Register" v-model="password_Register"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
-                                        <label for="password" class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="password"> <!-- id -->
+                                        <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="confirmPassword_Register"> <!-- id -->
                                     </div>
                                     <div class="d-grid">
                                         <button
@@ -241,6 +241,9 @@
 
     const username = ref('')
     const password = ref('')
+    const email_Register = ref('')
+    const password_Register = ref('')
+    const confirmPassword_Register = ref('')
     const isLoggingIn = ref(false)
 
     async function onLogin() {
