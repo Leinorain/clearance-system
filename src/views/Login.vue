@@ -77,18 +77,18 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="registerTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
-                                    <form @submit.prevent="onLogin">
+                                    <form @submit.prevent="onRegister">
                                         <div class="mb-3">
-                                            <label for="email_Register" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email_Register" v-model="registerEmail"> 
+                                            <label for="registerEmail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="registerEmail" v-model="registerEmail"> 
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password_Register" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password_Register" v-model="registerPassword"> 
+                                            <label for="registerPassword" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="registerPassword" v-model="registerPassword"> 
                                         </div>
                                         <div class="mb-3">
-                                            <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="registerConfirmPassword"> 
+                                            <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" id="registerConfirmPassword" v-model="registerConfirmPassword"> 
                                         </div>
                                         <div class="d-grid">
                                             <button
@@ -162,18 +162,18 @@
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="registerTabMobile" role="tabpanel" aria-labelledby="faq_tab_4-tab">
-                                <form @submit.prevent="onLogin">
+                                <form @submit.prevent="onRegister">
                                     <div class="mb-3">
-                                        <label for="email_Register" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email_Register" v-model="registerEmail"> <!-- id -->
+                                        <label for="registerEmail" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="registerEmail" v-model="registerEmail"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
-                                        <label for="password_Register" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password_Register" v-model="registerPassword"> <!-- id -->
+                                        <label for="registerPassword" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="registerPassword" v-model="registerPassword"> <!-- id -->
                                     </div>
                                     <div class="mb-3">
-                                        <label for="confirmPassword_Register" class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="registerConfirmPassword"> <!-- id -->
+                                        <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="registerConfirmPassword" v-model="registerConfirmPassword"> <!-- id -->
                                     </div>
                                     <div class="d-grid">
                                         <button
@@ -232,6 +232,7 @@
 <script setup>
     import { ref } from 'vue'
     import { signInWithEmailAndPassword } from '@firebase/auth'
+    import { createUserWithEmailAndPassword } from 'firebase/auth'
     import { useFirebaseStore } from '@/stores/firebase'
     import { useErrorsStore } from '@/stores/errors';
 
@@ -256,6 +257,23 @@
             console.error(e)
         } finally {
             isLoggingIn.value = false
+        }
+    }
+
+    async function onRegister() {
+        if(registerPassword.value === registerConfirmPassword.value){
+            isLoggingIn.value = true
+            try {
+                await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
+                console.log('register success')
+            } catch(e) {
+                errors.add('register failed.')
+                console.error(e)
+            } finally {
+                isLoggingIn.value = false
+            }
+        } else {
+            console.log('password does not match')
         }
     }
 </script>
