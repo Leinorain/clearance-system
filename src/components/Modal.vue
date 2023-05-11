@@ -25,7 +25,7 @@
                         type="button"
                         class="btn"
                         :class="props.actionClass"
-                        :disabled="isLoading"
+                        :disabled="isLoading || props.actionDisabled"
                         @click="emitAction">
                         <span
                             v-if="isLoading"
@@ -57,10 +57,11 @@ const props = defineProps({
         type: String,
         default: 'btn-primary'
     },
+    actionDisabled: Boolean,
     modelValue: Boolean
 })
 
-const emit = defineEmits([ 'action', 'update:modelValue' ])
+const emit = defineEmits([ 'action', 'close', 'update:modelValue' ])
 
 const modalEl = ref(null)
 const isLoading = ref(false)
@@ -69,6 +70,10 @@ let bsModal
 
 onMounted(() => {
     bsModal = new Modal(modalEl.value)
+    modalEl.value.addEventListener('hidden.bs.modal', () => {
+        value.value = false
+        emit('close')
+    })
 })
 
 const value = computed({

@@ -33,6 +33,15 @@
                         <td>{{ student.userId ? 'Registered' : 'Unregistered' }}</td>
                         <td>
                             <button
+                                class="btn btn-sm btn-info"
+                                :disabled="student.userId"
+                                @click="startBinding(index, student)">
+                                <i
+                                    class="bi"
+                                    :class="student.userId ? 'bi-person-fill-check' : 'bi-person-fill-add'">
+                                </i>
+                            </button>
+                            <button
                                 class="btn btn-sm btn-danger"
                                 @click="askToDelete(index)">
                                 <i class="bi bi-x-circle-fill"></i>
@@ -48,29 +57,40 @@
         action-label="Save"
         action-class="btn-primary"
         v-model="showCreateModal"
-        @action="createNewStudent">
-        <form>
-            <div class="mb-3">
-                <label for="idInput" class="form-label">ID Number</label>
-                <input type="text" id="idInput" class="form-control" v-model="newStudent.id">
-            </div>
-            <div class="mb-3">
-                <label for="lastnameInput" class="form-label">Last Name</label>
-                <input type="text" id="lastnameInput" class="form-control" v-model="newStudent.lastname">
-            </div>
-            <div class="mb-3">
-                <label for="firstnameInput" class="form-label">First Name</label>
-                <input type="text" id="firstnameInput" class="form-control" v-model="newStudent.firstname">
-            </div>
-            <div class="mb-3">
-                <label for="courseInput" class="form-label">Course</label>
-                <input type="text" id="courseInput" class="form-control" v-model="newStudent.course">
-            </div>
-            <div class="mb-3">
-                <label for="yearInput" class="form-label">Year</label>
-                <input type="number" id="yearInput" class="form-control" v-model="newStudent.year">
-            </div>
-        </form>
+        @action="createNewStudent"
+        @close="resetNewStudent">
+        <div class="mb-3">
+            <label for="idInput" class="form-label">ID Number</label>
+            <input type="text" id="idInput" class="form-control" v-model="newStudent.id">
+        </div>
+        <div class="mb-3">
+            <label for="lastnameInput" class="form-label">Last Name</label>
+            <input type="text" id="lastnameInput" class="form-control" v-model="newStudent.lastname">
+        </div>
+        <div class="mb-3">
+            <label for="firstnameInput" class="form-label">First Name</label>
+            <input type="text" id="firstnameInput" class="form-control" v-model="newStudent.firstname">
+        </div>
+        <div class="mb-3">
+            <label for="courseInput" class="form-label">Course</label>
+            <input type="text" id="courseInput" class="form-control" v-model="newStudent.course">
+        </div>
+        <div class="mb-3">
+            <label for="yearInput" class="form-label">Year</label>
+            <input type="number" id="yearInput" class="form-control" v-model="newStudent.year">
+        </div>
+    </Modal>
+    <Modal
+        title="Bind Student User"
+        action-label="Bind"
+        action-class="btn-primary"
+        v-model="showBindUserModal"
+        @action="bindStudent"
+        @close="resetStudentBinding">
+        <div class="mb-3">
+            <label for="bindingEmailInput" class="form-label">Email</label>
+            <input type="email" id="bindingEmailInput" class="form-control" v-model="studentBinding.email">
+        </div>
     </Modal>
     <Modal
         title="Delete Student"
@@ -119,6 +139,9 @@ const isLoadingData = ref(false)
 const data = ref([])
 
 const showCreateModal = ref(false)
+const showBindUserModal = ref(false)
+const showDeleteModal = ref(false)
+
 const {
     data: newStudent,
     reset: resetNewStudent,
@@ -131,7 +154,16 @@ const {
     year: 1
 })
 
-const showDeleteModal = ref(false)
+const {
+    data: studentBinding,
+    reset: resetStudentBinding,
+    unwrap: unwrapStudentBinding
+} = makeReactive({
+    index: -1,
+    studentId: '',
+    email: ''
+})
+
 const indexToDelete = ref(-1)
 const studentToDelete = computed(() => {
     return indexToDelete.value > -1 ? data.value[indexToDelete.value] : {}
@@ -166,12 +198,29 @@ async function createNewStudent($event) {
     try {
         const student = await students.createStudent(unwrapNewStudent())
         addStudent(student)
-        resetNewStudent()
         $event.close()
     } catch(e) {
         $event.error()
         console.error(e)
         errors.add(`Cannot create new student: ${e.message}`)
+    }
+}
+
+function startBinding(index, student) {
+    studentBinding.index = index
+    studentBinding.studentId = student.id
+    showBindUserModal.value = true
+}
+
+async function bindStudent($event) {
+    try {
+        const result = await students.bind(unwrapStudentBinding())
+        Object.assign(data.value[studentBinding.index], result.data)
+        $event.close()
+    } catch(e) {
+        $event.error()
+        console.error(e)
+        errors.add(`Cannot bind student to user: ${e.message}`)
     }
 }
 

@@ -1,10 +1,16 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { doc, query, orderBy, collection, where, setDoc, getDocs, deleteDoc } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { useFirebaseStore } from '@/stores/firebase'
 
 function getDb() {
     const firebase = useFirebaseStore()
     return firebase.getFirestore()
+}
+
+function getFunctions() {
+    const firebase = useFirebaseStore()
+    return firebase.getFunctions()
 }
 
 export const useStudentsStore = defineStore('student', {
@@ -42,6 +48,11 @@ export const useStudentsStore = defineStore('student', {
         async deleteStudent(id) {
             const db = getDb()
             await deleteDoc(doc(db, 'students', id))
+        },
+        bind(data) {
+            const functions = getFunctions()
+            const bind = httpsCallable(functions, 'bindstudentuser')
+            return bind(data)
         }
     }
 })
