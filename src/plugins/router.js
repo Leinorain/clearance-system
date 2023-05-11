@@ -16,6 +16,11 @@ const authenticatedRoutes = [
         path: '/school-year',
         name: 'school-year',
         component: () => import('@/views/SchoolYear.vue')
+    },
+    {
+        path: '/organization',
+        name: 'organization',
+        component: () => import('@/views/Organization.vue')
     }
 ]
 
@@ -29,7 +34,7 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: () => import('@/views/Login.vue')
+        component: () => import('@/views/Login.vue') //HOME
     },
 ]
 
