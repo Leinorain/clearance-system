@@ -30,25 +30,78 @@
 
                             
 
-                            <form @submit.prevent="onLogin">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username / ID Num</label>
-                                    <input type="text" class="form-control" id="username" v-model="username">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" v-model="password">
-                                </div>
-                                <div class="d-grid">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-success btn-lg"
-                                        :disabled="isLoggingIn">
-                                        <span v-if="isLoggingIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                                        Login
+                            <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <button class="nav-link active" id="faq_tab_1-tab" data-bs-toggle="tab"
+                                        data-bs-target="#loginTab" type="button" role="tab" aria-controls="faq_tab_1"
+                                        aria-selected="true">
+                                        <div class="d-flex flex-column lh-lg">
+                                            <i class="bi bi-person"></i>
+                                            <span>Login</span>
+                                        </div>
                                     </button>
+                                </li>
+                                <li class="nav-item"> 
+                                    <button class="nav-link" id="faq_tab_4-tab"
+                                        data-bs-toggle="tab" data-bs-target="#registerTab" type="button" role="tab"
+                                        aria-controls="faq_tab_4" aria-selected="false">
+
+                                        <div class="d-flex flex-column lh-lg"> 
+                                            <i class="bi bi-calendar"></i>
+                                            <span>Register</span> 
+                                        </div>
+                                    </button> 
+                                </li>
+                            </ul>
+
+                            <div class="tab-content mt-3" id="myTabContent">
+                                <div class="tab-pane fade active show" id="loginTab" role="tabpanel" aria-labelledby="faq_tab_1-tab">
+                                    <form @submit.prevent="onLogin">
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Username / ID Num</label>
+                                            <input type="text" class="form-control" id="username" v-model="username"> 
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="password" v-model="password"> 
+                                        </div>
+                                        <div class="d-grid">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-success btn-lg"
+                                                :disabled="isLoggingIn">
+                                                <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                                Login
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+                                <div class="tab-pane fade" id="registerTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
+                                    <form @submit.prevent="onLogin">
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="email_Register" v-model="username"> 
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="password_Register" v-model="password"> 
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword_Register" v-model="password"> 
+                                        </div>
+                                        <div class="d-grid">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-success btn-lg"
+                                                :disabled="isLoggingIn">
+                                                <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                                Register
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,48 +110,108 @@
         </div>
     </div>
     <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="card">
-                <div class="card-body">
-                    <div class="form-title text-center mb-5">
-                        <h4>Login</h4>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="card">
+                    <div class="card-body">
+
+                        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="faq_tab_1-tab" data-bs-toggle="tab"
+                                    data-bs-target="#loginTab" type="button" role="tab" aria-controls="faq_tab_1"
+                                    aria-selected="true">
+                                    <div class="d-flex flex-column lh-lg">
+                                        <i class="bi bi-person"></i>
+                                        <span>Login</span>
+                                    </div>
+                                </button>
+                            </li>
+                            <li class="nav-item"> 
+                                <button class="nav-link" id="faq_tab_4-tab"
+                                    data-bs-toggle="tab" data-bs-target="#registerTab" type="button" role="tab"
+                                    aria-controls="faq_tab_4" aria-selected="false">
+
+                                    <div class="d-flex flex-column lh-lg"> 
+                                        <i class="bi bi-person-add"></i>
+                                        <span>Register</span> 
+                                    </div>
+                                </button> 
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3" id="myTabContent">
+                            <div class="tab-pane fade active show" id="loginTab" role="tabpanel" aria-labelledby="faq_tab_1-tab">
+                                <form @submit.prevent="onLogin">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username / ID Num</label>
+                                        <input type="text" class="form-control" id="username" v-model="username"> <!-- id -->
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" v-model="password"> <!-- id -->
+                                    </div>
+                                    <div class="d-grid">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-lg"
+                                            :disabled="isLoggingIn">
+                                            <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                            Login
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="registerTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
+                                <form @submit.prevent="onLogin">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email_Register" v-model="username"> <!-- id -->
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password_Register" v-model="password"> <!-- id -->
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword_Register" v-model="password"> <!-- id -->
+                                    </div>
+                                    <div class="d-grid">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-lg"
+                                            :disabled="isLoggingIn">
+                                            <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                            Register
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
-                    <form @submit.prevent="onLogin">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username / ID Num</label>
-                            <input type="text" class="form-control" id="username" v-model="username"> <!-- id -->
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" v-model="password"> <!-- id -->
-                        </div>
-                        <div class="d-grid">
-                            <button
-                                type="submit"
-                                class="btn btn-success btn-lg"
-                                :disabled="isLoggingIn">
-                                <span v-if="isLoggingIn"  aria-hidden="true"></span>
-                                Login
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <style scoped>
-    .mobileViewShowLoginButton {
-        display: block; 
+
+    .nav-tabs .nav-link.active {
+            border-color: transparent;
+            background-color: #fff !important;
+            color: #198754 !important;
+            border-bottom: 4px solid #198754 !important
     }
 
-    @media (min-width: 992px) {
-        .mobileViewShowLoginButton {   
-        display: none; 
-        }
+    .nav-fill .nav-item .nav-link,
+    .nav-justified .nav-item .nav-link {
+        width: 100%;
+        color: #000
+    }
+
+    .mobileViewShowLoginButton {
+        display: block; 
     }
 
     .pcViewLoginCard {
@@ -106,36 +219,40 @@
     }
 
     @media (min-width: 992px) {
+        .mobileViewShowLoginButton {   
+        display: none; 
+        }
         .pcViewLoginCard {   
         display: block; 
         }
     }
+
 </style>
 
 <script setup>
-import { ref } from 'vue'
-import { signInWithEmailAndPassword } from '@firebase/auth'
-import { useFirebaseStore } from '@/stores/firebase'
-import { useErrorsStore } from '@/stores/errors';
+    import { ref } from 'vue'
+    import { signInWithEmailAndPassword } from '@firebase/auth'
+    import { useFirebaseStore } from '@/stores/firebase'
+    import { useErrorsStore } from '@/stores/errors';
 
-const errors = useErrorsStore()
-const firebase = useFirebaseStore()
-const auth = firebase.getAuth()
+    const errors = useErrorsStore()
+    const firebase = useFirebaseStore()
+    const auth = firebase.getAuth()
 
-const username = ref('')
-const password = ref('')
-const isLoggingIn = ref(false)
+    const username = ref('')
+    const password = ref('')
+    const isLoggingIn = ref(false)
 
-async function onLogin() {
-    isLoggingIn.value = true
-    try {
-        await signInWithEmailAndPassword(auth, username.value, password.value)
-        console.log('login success')
-    } catch(e) {
-        errors.add('Login failed.')
-        console.error(e)
-    } finally {
-        isLoggingIn.value = false
+    async function onLogin() {
+        isLoggingIn.value = true
+        try {
+            await signInWithEmailAndPassword(auth, username.value, password.value)
+            console.log('login success')
+        } catch(e) {
+            errors.add('Login failed.')
+            console.error(e)
+        } finally {
+            isLoggingIn.value = false
+        }
     }
-}
 </script>
