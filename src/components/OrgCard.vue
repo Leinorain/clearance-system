@@ -1,5 +1,5 @@
 <template>
-    <div class="card btn">
+    <div class="card btn" @click="onClick">
         <div v-if="isLoading" class="card-body">
             <p class="card-text placeholder-glow text-start">
                 <span class="placeholder placeholder-lg col-12"></span>
@@ -21,6 +21,7 @@
 </template>
 <script setup>
 import { computed } from 'vue'
+import router from '@/plugins/router'
 
 const props = defineProps({
     id: String,
@@ -29,6 +30,10 @@ const props = defineProps({
 })
 
 const isApproved = computed(() => props.data.status === 'approved')
+
+function onClick() {
+    router.push({ name: 'organization', params: { orgId: props.id } })
+}
 </script>
 <style>
 img.org-img {

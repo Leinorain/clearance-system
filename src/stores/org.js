@@ -12,7 +12,10 @@ function getDb() {
 }
 
 function handleError(e, message) {
-    console.error(e)
+    if(e) {
+        console.error(e)
+    }
+    
     const errors = useErrorsStore()
     errors.add(message)
 }
@@ -76,6 +79,19 @@ export const useOrgStore = defineStore('org', {
                 this.orgIds.push(org.id)
                 this.orgData[org.id] = org
             })
+        },
+        async loadOrg(id) {
+            const db = getDb()
+            const docRef = doc(db, 'organizations', id)
+            const docSnap = await getDoc(docRef)
+
+            if(!docSnap.exists()) {
+                handleError(null, 'Organization does not exist')
+                return
+            }
+
+            const orgData = { id: docSnap.id, ...docSnap.data() }
+            this.orgData[orgData.id] = orgData
         },
         async deleteOrg(id) {
             const db = getDb()

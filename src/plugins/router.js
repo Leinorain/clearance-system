@@ -18,7 +18,7 @@ const authenticatedRoutes = [
         component: () => import('@/views/SchoolYear.vue')
     },
     {
-        path: '/organization',
+        path: '/organizations/:orgId',
         name: 'organization',
         component: () => import('@/views/Organization.vue')
     },

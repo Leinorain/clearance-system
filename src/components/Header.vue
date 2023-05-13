@@ -1,8 +1,8 @@
 <template>
     <header class="masthead">
             <div class="container">
-                <div class="fs-1 fst-italic">
-                    <span class="text-bg-light bg-opacity-75 rounded px-1">Welcome!</span>
+                <div class="fs-1 fst-italic" v-if="props.greeting">
+                    <span class="text-bg-light bg-opacity-75 rounded px-1">{{ props.greeting }}</span>
                 </div>
                 <div class="fs-1 fw-semibold text-uppercase">
                     <span class="text-bg-light bg-opacity-75 rounded px-1">{{ props.name }}</span>
@@ -13,6 +13,10 @@
 </template>
 <script setup>
 const props = defineProps({
+    greeting: {
+        type: String,
+        default: 'Welcome!'
+    },
     name: String
 })
 </script>

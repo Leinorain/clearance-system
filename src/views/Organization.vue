@@ -1,5 +1,9 @@
 <template>
-    <Header :name="auth.userDisplayName"></Header>
+    <Header
+        v-if="organization"
+        greeting="Welcome to"
+        :name="organization.name">
+    </Header>
         
     <div class="container mt-2">
         <div class="row d-flex justify-content-center">
@@ -173,26 +177,30 @@
 
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> -->
 <script setup>
-
-    import { ref } from 'vue'
-    import { computed } from 'vue'
-
+    import { ref, computed, onMounted } from 'vue'
+    import { useRoute } from 'vue-router'
     import Header from '@/components/Header.vue'
     import { useAuthStore } from '@/stores/auth'
+    import { useOrgStore } from '@/stores/org'
+    import { useErrorsStore } from '@/stores/errors'
 
-    const props = defineProps({
-    id: String,
-    data: Object,
-    isLoading: Boolean
+    const route = useRoute()
+    const auth = useAuthStore()
+    const org = useOrgStore()
+    const errors = useErrorsStore()
+    const searchUser = ref('')
+
+    const organization = computed(() => {
+        return org.orgData[route.params.orgId]
     })
 
-    const auth = useAuthStore()
-    const searchUser = ref('')
-    
-    // jQuery(document).ready(function ($) {
-    //     $(".clickable-row").click(function () {
-    //         window.location = $(this).data("href");
-    //     });
-    // });
-        
+    onMounted(async () => {
+        if(!organization.value) {
+            try {
+                await org.loadOrg(route.params.orgId)
+            } catch(e) {
+                errors.add(`Cannot load org: ${e.message}`)
+            }
+        }
+    })
 </script>
