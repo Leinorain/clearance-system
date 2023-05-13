@@ -94,8 +94,8 @@
                                             <button
                                                 type="submit"
                                                 class="btn btn-success btn-lg"
-                                                :disabled="isLoggingIn">
-                                                <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                                :disabled="isRegistering">
+                                                <span v-if="isRegistering" aria-hidden="true"></span>
                                                 Register
                                             </button>
                                         </div>
@@ -179,8 +179,8 @@
                                         <button
                                             type="submit"
                                             class="btn btn-success btn-lg"
-                                            :disabled="isLoggingIn">
-                                            <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                            :disabled="isRegistering">
+                                            <span v-if="isRegistering"  aria-hidden="true"></span>
                                             Register
                                         </button>
                                     </div>
@@ -231,21 +231,21 @@
 
 <script setup>
     import { ref } from 'vue'
-    import { signInWithEmailAndPassword } from '@firebase/auth'
-    import { createUserWithEmailAndPassword } from 'firebase/auth'
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@firebase/auth'
     import { useFirebaseStore } from '@/stores/firebase'
-    import { useErrorsStore } from '@/stores/errors';
+    import { useErrorsStore } from '@/stores/errors'
+    import { isEmailValid, isPasswordValid } from '@/util/validations'
 
     const errors = useErrorsStore()
     const firebase = useFirebaseStore()
     const auth = firebase.getAuth()
-
     const username = ref('')
     const password = ref('')
     const registerEmail = ref('')
     const registerPassword = ref('')
     const registerConfirmPassword = ref('')
     const isLoggingIn = ref(false)
+    const isRegistering = ref(false)
 
     async function onLogin() {
         isLoggingIn.value = true
@@ -261,19 +261,26 @@
     }
 
     async function onRegister() {
-        if(registerPassword.value === registerConfirmPassword.value){
-            isLoggingIn.value = true
-            try {
-                await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
-                console.log('register success')
-            } catch(e) {
-                errors.add('register failed.')
-                console.error(e)
-            } finally {
-                isLoggingIn.value = false
+        isRegistering.value = true
+        try {
+            if(!isEmailValid(registerEmail.value)) {
+                throw new Error('Email is invalid')
             }
-        } else {
-            console.log('password does not match')
+
+            if(!isPasswordValid(registerPassword.value)) {
+                throw new Error('Password is invalid')
+            }
+
+            if(registerPassword.value != registerConfirmPassword.value) {
+                throw new Error('Passwords do not match')
+            }
+
+            await createUserWithEmailAndPassword(auth, registerEmail.value, registerPassword.value)
+        } catch(e) {
+            errors.add(`Registration failed: ${e.message}`)
+            console.error(e)
+        } finally {
+            isRegistering.value = false
         }
     }
 </script>
