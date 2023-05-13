@@ -19,7 +19,7 @@
                         <th>First Name</th>
                         <th>Course</th>
                         <th>Year</th>
-                        <th>Status</th>
+                        <th>User Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -33,18 +33,18 @@
                         <td>{{ student.userId ? 'Registered' : 'Unregistered' }}</td>
                         <td>
                             <button
-                                class="btn btn-sm btn-info"
-                                :disabled="student.userId"
-                                @click="startBinding(index, student)">
+                                class="btn btn-sm"
+                                :class="student.userId ? 'btn-warning' : 'btn-info'"
+                                @click="student.userId ? askUnbind(index, student) : startBinding(index, student)">
                                 <i
                                     class="bi"
-                                    :class="student.userId ? 'bi-person-fill-check' : 'bi-person-fill-add'">
+                                    :class="student.userId ? 'bi-x-circle' : 'bi-at'">
                                 </i>
                             </button>
                             <button
                                 class="btn btn-sm btn-danger"
                                 @click="askToDelete(index)">
-                                <i class="bi bi-x-circle-fill"></i>
+                                <i class="bi bi-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -93,11 +93,45 @@
         </div>
     </Modal>
     <Modal
+        title="Unbind Student User"
+        action-label="Unbind"
+        action-class="btn-warning"
+        v-model="showUnbindUserModal"
+        @action="unbindStudent"
+        @close="indexToUnbind = -1">
+        <p>Are you sure you want to unbind the account of this student?</p>
+        <div class="container">
+            <table class="table table-bordered">
+                <tr>
+                    <td>ID Num</td>
+                    <td>{{ studentToUnbind.id }}</td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td>{{ studentToUnbind.lastname }}</td>
+                </tr>
+                <tr>
+                    <td>First Name</td>
+                    <td>{{ studentToUnbind.firstname }}</td>
+                </tr>
+                <tr>
+                    <td>Course</td>
+                    <td>{{ studentToUnbind.course }}</td>
+                </tr>
+                <tr>
+                    <td>Year</td>
+                    <td>{{ studentToUnbind.year }}</td>
+                </tr>
+            </table>
+        </div>
+    </Modal>
+    <Modal
         title="Delete Student"
         action-label="Delete"
         action-class="btn-danger"
         v-model="showDeleteModal"
-        @action="deleteStudent">
+        @action="deleteStudent"
+        @close="indexToDelete = -1">
         <p>Are you sure you want to delete this student?</p>
         <div class="container">
             <table class="table table-bordered">
@@ -140,6 +174,7 @@ const data = ref([])
 
 const showCreateModal = ref(false)
 const showBindUserModal = ref(false)
+const showUnbindUserModal = ref(false)
 const showDeleteModal = ref(false)
 
 const {
@@ -162,6 +197,11 @@ const {
     index: -1,
     studentId: '',
     email: ''
+})
+
+const indexToUnbind = ref(-1)
+const studentToUnbind = computed(() => {
+    return indexToUnbind.value > -1 ? data.value[indexToUnbind.value] : {}
 })
 
 const indexToDelete = ref(-1)
@@ -206,6 +246,11 @@ async function createNewStudent($event) {
     }
 }
 
+function askUnbind(index) {
+    indexToUnbind.value = index
+    showUnbindUserModal.value = true
+}
+
 function startBinding(index, student) {
     studentBinding.index = index
     studentBinding.studentId = student.id
@@ -222,6 +267,10 @@ async function bindStudent($event) {
         console.error(e)
         errors.add(`Cannot bind student to user: ${e.message}`)
     }
+}
+
+async function unbindStudent($event) {
+    $event.close()
 }
 
 function askToDelete(idx) {
