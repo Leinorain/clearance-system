@@ -21,6 +21,16 @@ const authenticatedRoutes = [
         path: '/organization',
         name: 'organization',
         component: () => import('@/views/Organization.vue')
+    },
+    {
+        path: '/email-confirmation',
+        name: 'email-confirmation',
+        component: () => import('@/views/EmailConfirmation.vue')
+    },
+    {
+        path: '/admin-approval',
+        name: 'admin-approval',
+        component: () => import('@/views/AdminApproval.vue')
     }
 ]
 

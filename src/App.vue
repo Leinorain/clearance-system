@@ -45,10 +45,23 @@ onAuthStateChanged(firebase.getAuth(), async (user) => {
     checkedAuth.value = true
     if (user) {
         auth.user = user
-        // TODO: role init error handling
-        await roles.initializeUserRoles()
-        await roles.initializeStudentRoles()
-        router.push({ name: 'home' })
+
+        try {
+            if(user.emailVerified) {
+                await roles.initializeUserRoles()
+                if(roles.userRoles.length) {
+                    await roles.initializeStudentRoles()
+                    router.push({ name: 'home' })
+                } else {
+                    router.push({ name: 'admin-approval' })
+                }
+            } else {
+                router.push({ name: 'email-confirmation' })
+            }
+        } catch(e) {
+            errors.add(`An unexpected error occured: ${e.message}\nPlease try to refresh the page.`)
+        }
+        
     } else {
         roles.$reset()
         auth.$reset()
