@@ -70,7 +70,7 @@
                                                 type="submit"
                                                 class="btn btn-success btn-lg"
                                                 :disabled="isLoggingIn">
-                                                <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                                <span v-if="isLoggingIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                                 Login
                                             </button>
                                         </div>
@@ -95,7 +95,7 @@
                                                 type="submit"
                                                 class="btn btn-success btn-lg"
                                                 :disabled="isRegistering">
-                                                <span v-if="isRegistering" aria-hidden="true"></span>
+                                                <span v-if="isRegistering" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                                 Register
                                             </button>
                                         </div>
@@ -155,7 +155,7 @@
                                             type="submit"
                                             class="btn btn-success btn-lg"
                                             :disabled="isLoggingIn">
-                                            <span v-if="isLoggingIn"  aria-hidden="true"></span>
+                                            <span v-if="isLoggingIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Login
                                         </button>
                                     </div>
@@ -180,7 +180,7 @@
                                             type="submit"
                                             class="btn btn-success btn-lg"
                                             :disabled="isRegistering">
-                                            <span v-if="isRegistering"  aria-hidden="true"></span>
+                                            <span v-if="isRegistering" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Register
                                         </button>
                                     </div>
