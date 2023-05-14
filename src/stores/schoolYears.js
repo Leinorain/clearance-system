@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
+import { collection, query, where, doc, setDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 
 function getDb() {
@@ -8,11 +8,39 @@ function getDb() {
 }
 
 export const useSchoolYearsStore = defineStore('schoolYear', {
+    state: () => ({ current: null }),
     actions: {
         async createSchoolYear({ id, current }) {
             const db = getDb()
             await setDoc(doc(db, 'school_years', id), { current })
-            return { id, current }
+            const syData = { id, current }
+            if(current) {
+                this.current = syData
+            }
+            return syData
+        },
+        async getCurrentSchoolYear() {
+            if(!this.current) {
+                const db = getDb()
+                const colRef = collection(db, 'school_years')
+                const q = query(colRef, where('current', '==', true))
+                const snapshot = await getDocs(q)
+
+                if(snapshot.empty) {
+                    throw new Error('School Year is not set.')
+                }
+
+                if(snapshot.size > 1) {
+                    throw new Error('School Year is ambiguous.')
+                }
+
+                const currentDoc = snapshot.docs[0]
+                this.current = {
+                    id: currentDoc.id,
+                    ...currentDoc.data()
+                }
+            }
+            return this.current
         },
         async getSchoolYears() {
             const db = getDb()

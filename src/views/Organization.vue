@@ -135,22 +135,20 @@
                                 <table class="table text-center table-bordered ">
                                     <thead class = "bg-success text-white">
                                         <tr>
-                                            <th scope="col">ID Number</th>
-                                            <th scope="col">Name</th>
+                                            <th>ID Num</th>
+                                            <th>Last Name</th>
+                                            <th>First Name</th>
+                                            <th>Course</th>
+                                            <th>Year</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">00001</td>
-                                            <td>Firstname Lastname</td>
-                                        </tr>
-                                        <tr class="clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">00002</td>
-                                            <td>Firstname Lastname</td>
-                                        </tr>
-                                        <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">00003</td>
-                                            <td>Firstname Lastname</td>
+                                        <tr class="clickable-row" v-for="member in orgMemberRoles"> <!-- link -->
+                                            <td>{{ member.studentId }}</td>
+                                            <td>{{ member.lastname }}</td>
+                                            <td>{{ member.firstname }}</td>
+                                            <td>{{ member.course }}</td>
+                                            <td>{{ member.year }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -258,6 +256,7 @@
 
     const searchUser = ref('')
     const addAdminEmail = ref('')
+    const orgMemberRoles = ref([])
     const orgAdminRoles = ref([])
 
     const showAddAdminModal = ref(false)
@@ -273,6 +272,13 @@
             } catch(e) {
                 errors.add(`Cannot load org: ${e.message}`)
             }
+        }
+    }
+
+    async function loadOrgMembers() {
+        const { orgId } = route.params
+        if(roles.orgAdminRoles[orgId]) {
+            orgMemberRoles.value = await roles.getOrgMemberRoles(orgId)
         }
     }
 
@@ -303,6 +309,7 @@
 
     onMounted(async () => {
         await loadOrgInfo()
+        await loadOrgMembers()
         await loadOrgAdmins()
     })
 </script>
