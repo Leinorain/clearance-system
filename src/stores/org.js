@@ -51,7 +51,7 @@ export const useOrgStore = defineStore('org', {
                 if(roles.isSysAdmin) {
                     await this.loadAllOrgs()
                 } else {
-                    await this.loadStudentOrgs(roles)
+                    await this.loadOrgsFromRoles(roles)
                 }
             } catch(e) {
                 handleError(e, `Cannot load organizations: ${e.message}`)
@@ -68,9 +68,12 @@ export const useOrgStore = defineStore('org', {
                 this.orgData[orgId] = normalizeDoc(doc)
             })
         },
-        async loadStudentOrgs(roles) {
+        async loadOrgsFromRoles(roles) {
             const db = getDb()
-            const orgIds = roles.studentRoles.map(role => role.organizationId)
+            const studentOrgIds = roles.studentRoles.map(role => role.organizationId)
+            const orgAdminOrgIds = Object.keys(roles.orgAdminRoles)
+            const orgIdsSet = new Set([ ...studentOrgIds, ...orgAdminOrgIds ])
+            const orgIds = Array.from(orgIdsSet)
             const chunkedOrgIds = chunkArray(orgIds, 10)
             const promises = chunkedOrgIds.map(orgIds => this.loadStudentOrgsById(db, orgIds))
             await Promise.all(promises)
