@@ -14,9 +14,9 @@
                     <!-- role: student, org admin -->
 
                     <li class="nav-item"> 
-                        <button class="nav-link active" id="faq_tab_4-tab"
-                            data-bs-toggle="tab" data-bs-target="#eventTab" type="button" role="tab"
-                            aria-controls="faq_tab_4" aria-selected="false">
+                        <button class="nav-link active" id="events-tab"
+                            data-bs-toggle="tab" data-bs-target="#events-tab-content" type="button" role="tab"
+                            aria-controls="events">
 
                             <div class="d-flex flex-column lh-lg"> 
                                 <i class="bi bi-calendar"></i>
@@ -30,9 +30,8 @@
 
                     <!-- role: office admin, org admin -->
                     <li class="nav-item">
-                        <button class="nav-link " id="faq_tab_1-tab" data-bs-toggle="tab"
-                            data-bs-target="#memberTab" type="button" role="tab" aria-controls="faq_tab_1"
-                            aria-selected="true">
+                        <button class="nav-link" id="members-tab" data-bs-toggle="tab"
+                            data-bs-target="#members-tab-content" type="button" role="tab" aria-controls="members">
 
                             <div class="d-flex flex-column lh-lg">
                                 <i class="bi bi-person"></i>
@@ -42,20 +41,31 @@
                     </li>
                     <!-- role: office admin, org admin -->
 
+                    <li class="nav-item">
+                        <button class="nav-link" id="admins-tab" data-bs-toggle="tab"
+                            data-bs-target="#admins-tab-content" type="button" role="tab" aria-controls="admins">
+
+                            <div class="d-flex flex-column lh-lg">
+                                <i class="bi bi-person-workspace"></i>
+                                <span>Admins</span>
+                            </div>
+                        </button>
+                    </li>
+
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
 
                     <!-- role: student, org admin -->
-                    <div class="tab-pane fade active show" id="eventTab" role="tabpanel" aria-labelledby="faq_tab_4-tab">
+                    <div class="tab-pane fade active show" id="events-tab-content" role="tabpanel" aria-labelledby="events-tab">
                         <div class="container p-3">
 
                             <!-- student no add event button -->
-                            <div class = "row">
+                            <div class = "row mb-2">
                                 <div class = "col-md-8">
                                 </div>
                                 <div class="col-md-4">
-                                    <button class="btn btn-success mb-2 p-2" style="width: 100%">
+                                    <button class="btn btn-success" style="width: 100%">
                                         <i class="bi bi-calendar p-1"></i>
                                         Add Event
                                     </button>
@@ -75,17 +85,17 @@
 
                                     <tbody>
                                         <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">5/3/2023</th>
+                                            <td scope="row">5/3/2023</td>
                                             <td>Mass</td>
                                             <td>20</td>
                                         </tr>
                                         <tr class="clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">5/4/2023</th>
+                                            <td scope="row">5/4/2023</td>
                                             <td>Meeting</td>
                                             <td>25</td>
                                         </tr>
                                         <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">5/5/2023</th>
+                                            <td scope="row">5/5/2023</td>
                                             <td>Seminar</td>
                                             <td>50</td>
                                         </tr>
@@ -99,21 +109,21 @@
 
 
                     <!-- role: office admin, org admin -->
-                    <div class="tab-pane fade" id="memberTab" role="tabpanel" aria-labelledby="faq_tab_1-tab">
+                    <div class="tab-pane fade" id="members-tab-content" role="tabpanel" aria-labelledby="members-tab">
                         <div class="container p-3">
-                            <div class = "row">
+                            <div class = "row mb-2">
                                 <div class="col-md-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Name / ID Number" id="searchUser" v-model="searchUser"> 
-                                        <button class="btn btn-success mb-2 p-2">
+                                        <input type="text" class="form-control" placeholder="Name / ID Number" v-model="searchUser">
+                                        <button class="btn btn-success">
                                             <i class="bi bi-search px-1"></i>
                                             Search
                                         </button>
                                     </div>
                                 </div>
-                            <!-- office admin no add member button -->
+                                <!-- office admin no add member button -->
                                 <div class = "col-md-4">
-                                    <button class="btn btn-success mb-2 p-2" style="width: 100%">
+                                    <button class="btn btn-success" style="width: 100%">
                                         <i class="bi bi-person p-1"></i>
                                         Add Member
                                     </button>
@@ -131,15 +141,15 @@
                                     </thead>
                                     <tbody>
                                         <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">00001</th>
+                                            <td scope="row">00001</td>
                                             <td>Firstname Lastname</td>
                                         </tr>
                                         <tr class="clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">00002</th>
+                                            <td scope="row">00002</td>
                                             <td>Firstname Lastname</td>
                                         </tr>
                                         <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <th scope="row">00003</th>
+                                            <td scope="row">00003</td>
                                             <td>Firstname Lastname</td>
                                         </tr>
                                     </tbody>
@@ -149,6 +159,53 @@
                         </div>
                     </div>
                     <!-- role: office admin, org admin -->
+
+                    <div class="tab-pane fade" id="admins-tab-content" role="tabpanel" aria-labelledby="admins-tab">
+                        <div class="container p-3">
+                            <div class="row mb-2">
+                                <div class="col-md-8"></div>
+                                <div class="col-md-4">
+                                    <div class="d-grid">
+                                        <button class="btn btn-success">
+                                            <i class="bi bi-person-workspace"></i>
+                                            Add Admin
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <table class="table text-center table-bordered ">
+                                    <thead class = "bg-success text-white">
+                                        <tr>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>admin1@gmail.com</td>
+                                            <td>
+                                                <button
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>admin2gmail.com</td>
+                                            <td>
+                                                <button
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
