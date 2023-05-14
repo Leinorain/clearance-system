@@ -41,7 +41,7 @@
                     </li>
                     <!-- role: office admin, org admin -->
 
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="roles.isSysAdmin">
                         <button class="nav-link" id="admins-tab" data-bs-toggle="tab"
                             data-bs-target="#admins-tab-content" type="button" role="tab" aria-controls="admins">
 
@@ -74,7 +74,7 @@
                             <!-- student no add event button -->
                             
                             <div class = "row">
-                                <table class="table text-center table-bordered ">
+                                <table class="table text-center table-bordered">
                                     <thead class = "bg-success text-white">
                                         <tr>
                                             <th scope="col">Date</th>
@@ -160,7 +160,12 @@
                     </div>
                     <!-- role: office admin, org admin -->
 
-                    <div class="tab-pane fade" id="admins-tab-content" role="tabpanel" aria-labelledby="admins-tab">
+                    <div
+                        v-if="roles.isSysAdmin"
+                        class="tab-pane fade"
+                        id="admins-tab-content"
+                        role="tabpanel"
+                        aria-labelledby="admins-tab">
                         <div class="container p-3">
                             <div class="row mb-2">
                                 <div class="col-md-8"></div>
@@ -175,7 +180,7 @@
                             </div>
 
                             <div class="row">
-                                <table class="table text-center table-bordered ">
+                                <table class="table text-center table-bordered">
                                     <thead class = "bg-success text-white">
                                         <tr>
                                             <th scope="col">Email</th>
@@ -183,17 +188,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>admin1@gmail.com</td>
-                                            <td>
-                                                <button
-                                                    class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>admin2gmail.com</td>
+                                        <tr v-for="admin in orgAdminRoles">
+                                            <td>{{ admin.userEmail }}</td>
                                             <td>
                                                 <button
                                                     class="btn btn-sm btn-danger">
@@ -237,21 +233,23 @@
     import { ref, computed, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import Header from '@/components/Header.vue'
-    import { useAuthStore } from '@/stores/auth'
     import { useOrgStore } from '@/stores/org'
+    import { useRolesStore } from '@/stores/roles'
     import { useErrorsStore } from '@/stores/errors'
 
     const route = useRoute()
-    const auth = useAuthStore()
     const org = useOrgStore()
+    const roles = useRolesStore()
     const errors = useErrorsStore()
+
     const searchUser = ref('')
+    const orgAdminRoles = ref([])
 
     const organization = computed(() => {
         return org.orgData[route.params.orgId]
     })
 
-    onMounted(async () => {
+    async function loadOrgInfo() {
         if(!organization.value) {
             try {
                 await org.loadOrg(route.params.orgId)
@@ -259,5 +257,20 @@
                 errors.add(`Cannot load org: ${e.message}`)
             }
         }
+    }
+
+    async function loadOrgAdmins() {
+        if(roles.isSysAdmin) {
+            try {
+                orgAdminRoles.value = await roles.getOrgAdminRoles(route.params.orgId)
+            } catch(e) {
+                errors.add(`Cannot load org admins: ${e.message}`)
+            }
+        }
+    }
+
+    onMounted(async () => {
+        await loadOrgInfo()
+        await loadOrgAdmins()
     })
 </script>

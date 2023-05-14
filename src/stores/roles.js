@@ -54,6 +54,13 @@ export const useRolesStore = defineStore('roles', {
                 }
                 this.isStudentRolesInitialized = true
             }
+        },
+        async getOrgAdminRoles(orgId) {
+            const db = getDb()
+            const roles = collection(db, 'roles')
+            const q = query(roles, where('type', '==', 'orgadmin'), where('orgId', '==', orgId))
+            const docs = await getDocs(q)
+            return docs.docs.map(normalizeDoc)
         }
     }
 })
