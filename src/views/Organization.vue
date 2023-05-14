@@ -26,10 +26,8 @@
                     </li>
                     <!-- role: student, org admin -->
 
-
-
                     <!-- role: office admin, org admin -->
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="showMembersTab">
                         <button class="nav-link" id="members-tab" data-bs-toggle="tab"
                             data-bs-target="#members-tab-content" type="button" role="tab" aria-controls="members">
 
@@ -41,7 +39,7 @@
                     </li>
                     <!-- role: office admin, org admin -->
 
-                    <li class="nav-item" v-if="roles.isSysAdmin">
+                    <li class="nav-item" v-if="showAdminsTab">
                         <button class="nav-link" id="admins-tab" data-bs-toggle="tab"
                             data-bs-target="#admins-tab-content" type="button" role="tab" aria-controls="admins">
 
@@ -109,7 +107,12 @@
 
 
                     <!-- role: office admin, org admin -->
-                    <div class="tab-pane fade" id="members-tab-content" role="tabpanel" aria-labelledby="members-tab">
+                    <div
+                        v-if="showMembersTab"
+                        class="tab-pane fade"
+                        id="members-tab-content"
+                        role="tabpanel"
+                        aria-labelledby="members-tab">
                         <div class="container p-3">
                             <div class = "row mb-2">
                                 <div class="col-md-8">
@@ -159,7 +162,7 @@
                     <!-- role: office admin, org admin -->
 
                     <div
-                        v-if="roles.isSysAdmin"
+                        v-if="showAdminsTab"
                         class="tab-pane fade"
                         id="admins-tab-content"
                         role="tabpanel"
@@ -265,6 +268,14 @@
         return org.orgData[route.params.orgId]
     })
 
+    const showMembersTab = computed(() => {
+        return roles.isSysAdmin || roles.orgAdminRoles[route.params.orgId]
+    })
+
+    const showAdminsTab = computed(() => {
+        return roles.isSysAdmin
+    })
+
     async function loadOrgInfo() {
         if(!organization.value) {
             try {
@@ -277,7 +288,7 @@
 
     async function loadOrgMembers() {
         const { orgId } = route.params
-        if(roles.orgAdminRoles[orgId]) {
+        if(roles.isSysAdmin || roles.orgAdminRoles[orgId]) {
             orgMemberRoles.value = await roles.getOrgMemberRoles(orgId)
         }
     }
