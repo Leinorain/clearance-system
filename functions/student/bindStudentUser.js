@@ -4,8 +4,6 @@ const { logger } = require('firebase-functions')
 const { HttpsError } = require('firebase-functions/v2/https')
 
 module.exports = async function bindStudentUser(request) {
-    // TODO: create user student role
-    // TODO: update user displayName
     const { email, studentId } = request.data
 
     const auth = getAuth()

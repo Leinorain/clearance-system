@@ -171,7 +171,7 @@
                                 <div class="col-md-8"></div>
                                 <div class="col-md-4">
                                     <div class="d-grid">
-                                        <button class="btn btn-success">
+                                        <button class="btn btn-success" @click="showAddAdminModal = true">
                                             <i class="bi bi-person-workspace"></i>
                                             Add Admin
                                         </button>
@@ -206,7 +206,19 @@
 
             </div>
         </div>
-    </div>  
+    </div>
+    <Modal
+        title="Add Organization Admin"
+        action-label="Add"
+        action-class="btn-primary"
+        v-model="showAddAdminModal"
+        @action="addAdmin"
+        @close="addAdminEmail = ''">
+        <div class="mb-3">
+            <label for="addAdminEmailInput" class="form-label">Email</label>
+            <input type="email" class="form-control" id="addAdminEmailInput" v-model="addAdminEmail">
+        </div>
+    </Modal>
 </template>
 
 <style>
@@ -233,9 +245,11 @@
     import { ref, computed, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import Header from '@/components/Header.vue'
+    import Modal from '@/components/Modal.vue'
     import { useOrgStore } from '@/stores/org'
     import { useRolesStore } from '@/stores/roles'
     import { useErrorsStore } from '@/stores/errors'
+    import { isEmailValid } from '@/util/validations'
 
     const route = useRoute()
     const org = useOrgStore()
@@ -243,7 +257,10 @@
     const errors = useErrorsStore()
 
     const searchUser = ref('')
+    const addAdminEmail = ref('')
     const orgAdminRoles = ref([])
+
+    const showAddAdminModal = ref(false)
 
     const organization = computed(() => {
         return org.orgData[route.params.orgId]
@@ -266,6 +283,21 @@
             } catch(e) {
                 errors.add(`Cannot load org admins: ${e.message}`)
             }
+        }
+    }
+
+    async function addAdmin($event) {
+        try {
+            if(!isEmailValid(addAdminEmail.value)) {
+                throw new Error('Invalid email')
+            }
+
+            const result = await org.addAdmin(route.params.orgId, addAdminEmail.value)
+            orgAdminRoles.value.push(result.data)
+            $event.close()
+        } catch(e) {
+            $event.error()
+            errors.add(`Cannot add admin: ${e.message}`)
         }
     }
 

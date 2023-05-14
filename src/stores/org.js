@@ -5,10 +5,16 @@ import { useFirebaseStore } from '@/stores/firebase'
 import { useErrorsStore } from '@/stores/errors'
 import chunkArray from '@/util/chunkArray'
 import normalizeDoc from '@/util/normalizeDoc'
+import { httpsCallable } from 'firebase/functions'
 
 function getDb() {
     const firebase = useFirebaseStore()
     return firebase.getFirestore()
+}
+
+function getFunctions() {
+    const firebase = useFirebaseStore()
+    return firebase.getFunctions()
 }
 
 function handleError(e, message) {
@@ -96,6 +102,11 @@ export const useOrgStore = defineStore('org', {
         async deleteOrg(id) {
             const db = getDb()
             await deleteDoc(doc(db, 'organizations', id))
+        },
+        addAdmin(orgId, email) {
+            const functions = getFunctions()
+            const addAdmin = httpsCallable(functions, 'addorgadminuser')
+            return addAdmin({ orgId, email })
         }
     }
 })
