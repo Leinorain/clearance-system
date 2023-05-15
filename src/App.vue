@@ -27,7 +27,7 @@
 <script setup>
 import { ref } from 'vue'
 import ErrorToast from '@/components/ErrorToast.vue'
-import { onAuthStateChanged } from '@firebase/auth'
+import { onAuthStateChanged, sendEmailVerification } from '@firebase/auth'
 import { useErrorsStore } from '@/stores/errors'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useAuthStore } from '@/stores/auth'
@@ -56,6 +56,7 @@ onAuthStateChanged(firebase.getAuth(), async (user) => {
                     router.push({ name: 'admin-approval' })
                 }
             } else {
+                await sendEmailVerification(user)
                 router.push({ name: 'email-confirmation' })
             }
         } catch(e) {
