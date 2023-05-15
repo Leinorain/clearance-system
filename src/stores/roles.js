@@ -1,7 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { collection, query, where, getDocs, orderBy, getDoc, doc, startAt } from 'firebase/firestore'
+import { collection, query, where, getDocs, orderBy, setDoc, getDoc, doc, startAt } from 'firebase/firestore'
 import { useAuthStore } from '@/stores/auth'
 import { useFirebaseStore } from '@/stores/firebase'
+import { useStudentsStore } from '@/stores/students'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import normalizeDoc from '@/util/normalizeDoc'
 
@@ -84,6 +85,35 @@ export const useRolesStore = defineStore('roles', {
             const q = query(rolesCol, ...queryConstraints)
             const docs = await getDocs(q)
             return docs.docs.map(normalizeDoc)
+        },
+        async addOrgMember(orgId, studentId) {
+            const db = getDb()
+            const students = useStudentsStore()
+            const schoolYears = useSchoolYearsStore()
+
+            const currentSy = await schoolYears.getCurrentSchoolYear()
+            const roleId = `orgmember_${studentId}_${orgId}_${currentSy.id}`
+
+            const roleDoc = await getDoc(doc(db, 'roles', roleId))
+            if(roleDoc.exists()) {
+                throw new Error('Member is already added')
+            }
+
+            const student = await students.getStudent(studentId)
+            
+            const roleData = {
+                type: 'orgmember',
+                organizationId: orgId,
+                studentId: student.id,
+                firstname: student.firstname,
+                lastname: student.lastname,
+                course: student.course,
+                year: student.year,
+                schoolYear: currentSy.id
+            }
+
+            await setDoc(doc(db, 'roles', roleId), roleData)
+            return { id: roleId, ...roleData }
         }
     }
 })

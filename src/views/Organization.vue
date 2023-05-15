@@ -126,7 +126,7 @@
                                 </div>
                                 <!-- office admin no add member button -->
                                 <div class = "col-md-4">
-                                    <button class="btn btn-success" style="width: 100%">
+                                    <button class="btn btn-success" style="width: 100%" @click="showAddMemberModal = true">
                                         <i class="bi bi-person p-1"></i>
                                         Add Member
                                     </button>
@@ -209,6 +209,18 @@
         </div>
     </div>
     <Modal
+        title="Add Member"
+        action-label="Add"
+        action-class="btn-primary"
+        v-model="showAddMemberModal"
+        @action="addMember"
+        @close="addMemberId = ''">
+        <div class="mb-3">
+            <label for="addMemberIdInput" class="form-label">ID Num</label>
+            <input type="text" class="form-control" id="addMemberIdInput" v-model="addMemberId">
+        </div>
+    </Modal>
+    <Modal
         title="Add Organization Admin"
         action-label="Add"
         action-class="btn-primary"
@@ -258,10 +270,12 @@
     const errors = useErrorsStore()
 
     const searchUser = ref('')
+    const addMemberId = ref('')
     const addAdminEmail = ref('')
     const orgMemberRoles = ref([])
     const orgAdminRoles = ref([])
 
+    const showAddMemberModal = ref(false)
     const showAddAdminModal = ref(false)
 
     const organization = computed(() => {
@@ -300,6 +314,19 @@
             } catch(e) {
                 errors.add(`Cannot load org admins: ${e.message}`)
             }
+        }
+    }
+
+    async function addMember($event) {
+        try {
+            const { orgId } = route.params
+            const role = await roles.addOrgMember(orgId, addMemberId.value)
+            orgMemberRoles.value.push(role)
+            $event.close()
+        } catch(e) {
+            $event.error()
+            console.error(e)
+            errors.add(`Cannot add member: ${e.message}`)
         }
     }
 

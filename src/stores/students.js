@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { doc, query, orderBy, collection, where, setDoc, getDocs, deleteDoc } from 'firebase/firestore'
+import { doc, query, orderBy, collection, where, setDoc, getDoc, getDocs, deleteDoc } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { useFirebaseStore } from '@/stores/firebase'
 
@@ -44,6 +44,14 @@ export const useStudentsStore = defineStore('student', {
             const q = query(students, orderBy('lastname'))
             const snapshot = await getDocs(q)
             return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        },
+        async getStudent(id) {
+            const db = getDb()
+            const studentDoc = await getDoc(doc(db, 'students', id))
+            if(!studentDoc.exists()) {
+                throw new Error('Student does not exist')
+            }
+            return { id: studentDoc.id, ...studentDoc.data() }
         },
         async deleteStudent(id) {
             const db = getDb()
