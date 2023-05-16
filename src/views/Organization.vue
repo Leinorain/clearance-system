@@ -27,7 +27,7 @@
                     <!-- role: student, org admin -->
 
                     <!-- role: office admin, org admin -->
-                    <li class="nav-item" v-if="isOrgAdmin">
+                    <li class="nav-item" v-if="isSysAdmin || isOrgAdmin">
                         <button class="nav-link" id="members-tab" data-bs-toggle="tab"
                             data-bs-target="#members-tab-content" type="button" role="tab" aria-controls="members">
 
@@ -59,11 +59,11 @@
                         <div class="container p-3">
 
                             <!-- student no add event button -->
-                            <div class = "row mb-2" v-if="isOrgAdmin">
+                            <div class = "row mb-2" v-if="isSysAdmin || isOrgAdmin">
                                 <div class = "col-md-8">
                                 </div>
                                 <div class="col-md-4">
-                                    <button class="btn btn-success" style="width: 100%">
+                                    <button class="btn btn-success" style="width: 100%" @click="showAddEventModal = true">
                                         <i class="bi bi-calendar p-1"></i>
                                         Add Event
                                     </button>
@@ -98,7 +98,7 @@
 
                     <!-- role: office admin, org admin -->
                     <div
-                        v-if="isOrgAdmin"
+                        v-if="isSysAdmin || isOrgAdmin"
                         class="tab-pane fade"
                         id="members-tab-content"
                         role="tabpanel"
@@ -107,7 +107,7 @@
                             <div class = "row mb-2">
                                 <div class="col-md-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Name / ID Number" v-model="searchUser">
+                                        <input type="text" class="form-control" placeholder="Name / ID Number">
                                         <button class="btn btn-success">
                                             <i class="bi bi-search px-1"></i>
                                             Search
@@ -199,6 +199,32 @@
         </div>
     </div>
     <Modal
+        title="Add Event"
+        action-label="Add"
+        action-class="btn-primary"
+        v-model="showAddEventModal"
+        @action="addNewEvent"
+        @close="resetAddEvent">
+        <div class="mb-3 row">
+            <label for="addEventNameInput" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="addEventNameInput" v-model="addEvent.name">
+            </div>
+        </div>
+        <div class="mb-3 row justify-content-start">
+            <label for="addEventFineInput" class="col-sm-2 col-form-label">Fine</label>
+            <div class="col-sm-4">
+                <input type="number" id="addEventFineInput" class="form-control" v-model="addEvent.fine">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="addEventDateInput" class="col-sm-2 col-form-label">Date</label>
+            <div class="col-sm-10">
+                <DatePicker id="addEventDateInput" v-model="addEvent.date"></DatePicker>
+            </div>
+        </div>
+    </Modal>
+    <Modal
         title="Add Member"
         action-label="Add"
         action-class="btn-primary"
@@ -250,27 +276,27 @@
     import { useRoute } from 'vue-router'
     import Header from '@/components/Header.vue'
     import Modal from '@/components/Modal.vue'
+    import DatePicker from '@/components/DatePicker.vue'
     import { useOrgStore } from '@/stores/org'
     import { useRolesStore } from '@/stores/roles'
     import { useEventsStore } from '@/stores/events'
-    import { useSchoolYearsStore } from '@/stores/schoolYears'
     import { useErrorsStore } from '@/stores/errors'
     import { isEmailValid } from '@/util/validations'
+    import makeReactive from '@/util/makeReactive'
 
     const route = useRoute()
     const org = useOrgStore()
     const roles = useRolesStore()
     const events = useEventsStore()
-    const schoolYears = useSchoolYearsStore()
     const errors = useErrorsStore()
 
-    const searchUser = ref('')
     const addMemberId = ref('')
     const addAdminEmail = ref('')
     const orgEvents = ref([])
     const orgMemberRoles = ref([])
     const orgAdminRoles = ref([])
 
+    const showAddEventModal = ref(false)
     const showAddMemberModal = ref(false)
     const showAddAdminModal = ref(false)
 
@@ -279,11 +305,21 @@
     })
 
     const isOrgAdmin = computed(() => {
-        return roles.isSysAdmin || roles.orgAdminRoles[route.params.orgId]
+        return Boolean(roles.orgAdminRoles[route.params.orgId])
     })
 
     const isSysAdmin = computed(() => {
         return roles.isSysAdmin
+    })
+
+    const {
+        data: addEvent,
+        reset: resetAddEvent,
+        unwrap: unwrapAddEvent
+    } = makeReactive({
+        name: '',
+        fine: 50,
+        date: dayjs().format('YYYY-MM-DD')
     })
 
     async function loadOrgInfo() {
@@ -299,8 +335,7 @@
     async function loadOrgEvents() {
         const { orgId } = route.params
         try {
-            const currentSy = await schoolYears.getCurrentSchoolYear()
-            orgEvents.value = await events.getOrgEvents(orgId, currentSy.id)
+            orgEvents.value = await events.getOrgEvents(orgId)
         } catch(e) {
             errors.add(`Cannot load org events: ${e.message}`)
         }
@@ -320,6 +355,27 @@
             } catch(e) {
                 errors.add(`Cannot load org admins: ${e.message}`)
             }
+        }
+    }
+
+    async function addNewEvent($event) {
+        const { orgId } = route.params
+        try {
+            const data = unwrapAddEvent()
+            if(data.name.length < 3) {
+                throw new Error('Event name must be at least 3 characters long')
+            }
+            if(data.fine < 0) {
+                throw new Error('Event fine should not be negative')
+            }
+
+            const event = await events.createOrgEvent({ orgId, ...data })
+            orgEvents.value.push(event)
+            $event.close()
+        } catch(e) {
+            $event.error()
+            console.error(e)
+            errors.add(`Cannot add event ${e.message}`)
         }
     }
 
