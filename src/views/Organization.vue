@@ -27,7 +27,7 @@
                     <!-- role: student, org admin -->
 
                     <!-- role: office admin, org admin -->
-                    <li class="nav-item" v-if="showMembersTab">
+                    <li class="nav-item" v-if="isOrgAdmin">
                         <button class="nav-link" id="members-tab" data-bs-toggle="tab"
                             data-bs-target="#members-tab-content" type="button" role="tab" aria-controls="members">
 
@@ -39,7 +39,7 @@
                     </li>
                     <!-- role: office admin, org admin -->
 
-                    <li class="nav-item" v-if="showAdminsTab">
+                    <li class="nav-item" v-if="isSysAdmin">
                         <button class="nav-link" id="admins-tab" data-bs-toggle="tab"
                             data-bs-target="#admins-tab-content" type="button" role="tab" aria-controls="admins">
 
@@ -59,7 +59,7 @@
                         <div class="container p-3">
 
                             <!-- student no add event button -->
-                            <div class = "row mb-2">
+                            <div class = "row mb-2" v-if="isOrgAdmin">
                                 <div class = "col-md-8">
                                 </div>
                                 <div class="col-md-4">
@@ -82,20 +82,10 @@
                                     </thead>
 
                                     <tbody>
-                                        <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">5/3/2023</td>
-                                            <td>Mass</td>
-                                            <td>20</td>
-                                        </tr>
-                                        <tr class="clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">5/4/2023</td>
-                                            <td>Meeting</td>
-                                            <td>25</td>
-                                        </tr>
-                                        <tr class = "clickable-row" data-href='//'> <!-- link -->
-                                            <td scope="row">5/5/2023</td>
-                                            <td>Seminar</td>
-                                            <td>50</td>
+                                        <tr class="clickable-row" v-for="event of orgEvents">
+                                            <td>{{ dayjs(event.date).format('YYYY-MM-DD') }}</td>
+                                            <td>{{ event.name }}</td>
+                                            <td>{{ event.fine }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -108,7 +98,7 @@
 
                     <!-- role: office admin, org admin -->
                     <div
-                        v-if="showMembersTab"
+                        v-if="isOrgAdmin"
                         class="tab-pane fade"
                         id="members-tab-content"
                         role="tabpanel"
@@ -162,7 +152,7 @@
                     <!-- role: office admin, org admin -->
 
                     <div
-                        v-if="showAdminsTab"
+                        v-if="isSysAdmin"
                         class="tab-pane fade"
                         id="admins-tab-content"
                         role="tabpanel"
@@ -255,23 +245,29 @@
 
 <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> -->
 <script setup>
+    import dayjs from 'dayjs'
     import { ref, computed, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import Header from '@/components/Header.vue'
     import Modal from '@/components/Modal.vue'
     import { useOrgStore } from '@/stores/org'
     import { useRolesStore } from '@/stores/roles'
+    import { useEventsStore } from '@/stores/events'
+    import { useSchoolYearsStore } from '@/stores/schoolYears'
     import { useErrorsStore } from '@/stores/errors'
     import { isEmailValid } from '@/util/validations'
 
     const route = useRoute()
     const org = useOrgStore()
     const roles = useRolesStore()
+    const events = useEventsStore()
+    const schoolYears = useSchoolYearsStore()
     const errors = useErrorsStore()
 
     const searchUser = ref('')
     const addMemberId = ref('')
     const addAdminEmail = ref('')
+    const orgEvents = ref([])
     const orgMemberRoles = ref([])
     const orgAdminRoles = ref([])
 
@@ -282,11 +278,11 @@
         return org.orgData[route.params.orgId]
     })
 
-    const showMembersTab = computed(() => {
+    const isOrgAdmin = computed(() => {
         return roles.isSysAdmin || roles.orgAdminRoles[route.params.orgId]
     })
 
-    const showAdminsTab = computed(() => {
+    const isSysAdmin = computed(() => {
         return roles.isSysAdmin
     })
 
@@ -297,6 +293,16 @@
             } catch(e) {
                 errors.add(`Cannot load org: ${e.message}`)
             }
+        }
+    }
+
+    async function loadOrgEvents() {
+        const { orgId } = route.params
+        try {
+            const currentSy = await schoolYears.getCurrentSchoolYear()
+            orgEvents.value = await events.getOrgEvents(orgId, currentSy.id)
+        } catch(e) {
+            errors.add(`Cannot load org events: ${e.message}`)
         }
     }
 
@@ -347,6 +353,7 @@
 
     onMounted(async () => {
         await loadOrgInfo()
+        await loadOrgEvents()
         await loadOrgMembers()
         await loadOrgAdmins()
     })
