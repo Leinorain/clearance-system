@@ -86,6 +86,21 @@ export const useRolesStore = defineStore('roles', {
             const docs = await getDocs(q)
             return docs.docs.map(normalizeDoc)
         },
+        async getOrgMemberRole(orgId, studentId) {
+            // TODO: refactor with addOrgMember()
+            const db = getDb()
+            const schoolYears = useSchoolYearsStore()
+
+            const currentSy = await schoolYears.getCurrentSchoolYear()
+            const roleId = `orgmember_${studentId}_${orgId}_${currentSy.id}`
+
+            const roleDoc = await getDoc(doc(db, 'roles', roleId))
+            if(!roleDoc.exists()) {
+                throw new Error('Member not found')
+            }
+
+            return normalizeDoc(roleDoc)
+        },
         async addOrgMember(orgId, studentId) {
             const db = getDb()
             const students = useStudentsStore()

@@ -82,7 +82,10 @@
                                     </thead>
 
                                     <tbody>
-                                        <tr class="clickable-row" v-for="event of orgEvents">
+                                        <tr
+                                            :class="{'clickable-row': isOrgAdmin || isSysAdmin }"
+                                            v-for="event of orgEvents"
+                                            @click="$router.push({ name: 'event', params: { orgId: $route.params.orgId, eventId: event.id } })">
                                             <td>{{ dayjs(event.date).format('YYYY-MM-DD') }}</td>
                                             <td>{{ event.name }}</td>
                                             <td>{{ event.fine }}</td>
