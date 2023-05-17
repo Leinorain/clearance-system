@@ -29,7 +29,7 @@ export const useRolesStore = defineStore('roles', {
         sysAdminRole: (state) => state.userRoles.find(isRole('sysadmin')),
         studentRole: (state) => state.userRoles.find(isRole('student')),
         isSysAdmin: (state) => Boolean(state.sysAdminRole),
-        isStudent: (state) => Boolean(state.studentRole)
+        isStudent() { return Boolean(this.studentRole) }
     },
     actions: {
         async initializeUserRoles() {

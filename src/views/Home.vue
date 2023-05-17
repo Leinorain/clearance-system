@@ -49,7 +49,9 @@
                 class="col-sm-12 col-md-6">
                 <OrgCard
                     :id="orgId"
-                    :data="org.orgData[orgId]">
+                    :data="org.orgData[orgId]"
+                    :isApproved="Boolean(clearancesByOrgId[orgId])"
+                    :isLoadingApproved="isClearancesLoading">
                 </OrgCard>
             </div>
         </div>
@@ -82,11 +84,15 @@ import Header from '@/components/Header.vue'
 import OrgCard from '@/components/OrgCard.vue'
 import { useOrgStore } from '@/stores/org'
 import { useAuthStore } from '@/stores/auth'
+import { useRolesStore } from '@/stores/roles'
+import { useClearancesStore } from '@/stores/clearances'
 import { useErrorsStore } from '@/stores/errors'
 import Modal from '@/components/Modal.vue'
 
 const auth = useAuthStore()
 const org = useOrgStore()
+const roles = useRolesStore()
+const clearances = useClearancesStore()
 const errors = useErrorsStore()
 
 const showCreateModal = ref(false)
@@ -98,9 +104,26 @@ const orgNameToDelete = computed(() => {
     return indexToDelete.value > -1 ? org.orgData[org.orgIds[indexToDelete.value]].name : ''
 })
 
-onMounted(async () => {
-    await org.loadCurrentUserOrgs()
-})
+const isClearancesLoading = ref(false)
+const clearancesByOrgId = ref({})
+
+async function loadClearances() {
+    if(!roles.isStudent) {
+        return
+    }
+    try {
+        isClearancesLoading.value = true
+        const records = await clearances.getStudentClearances(roles.studentRole.studentId)
+        for(const clearance of records) {
+            clearancesByOrgId.value[clearance.orgId] = clearance
+        }
+    } catch(e) {
+        console.error(e)
+        errors.add(`Cannot load student clearances: ${e.message}`)
+    } finally {
+        isClearancesLoading.value = false
+    }
+}
 
 async function createOrg($event) {
     try {
@@ -136,4 +159,9 @@ async function deleteOrg($event) {
         }
     }
 }
+
+onMounted(async () => {
+    await org.loadCurrentUserOrgs()
+    await loadClearances()
+})
 </script>

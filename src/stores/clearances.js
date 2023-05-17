@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, doc, query, where, getDocs, getDoc, setDoc } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import normalizeDoc from '@/util/normalizeDoc'
@@ -43,6 +43,20 @@ export const useClearancesStore = defineStore('clearances', {
             return clearanceDoc.exists()
                 ? normalizeDoc(clearanceDoc)
                 : null
+        },
+        async getStudentClearances(studentId) {
+            const currentSy = await getCurrentSy()
+
+            const db = getDb()
+            const clearanceCol = collection(db, 'clearances')
+            const q = query(
+                clearanceCol,
+                where('studentId', '==', studentId),
+                where('schoolYear', '==', currentSy.id)
+            )
+
+            const snapshot = await getDocs(q)
+            return snapshot.docs.map(normalizeDoc)
         }
     }
 })
