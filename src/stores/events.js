@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { collection, doc, query, where, orderBy, setDoc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, query, where, orderBy, addDoc, setDoc, getDoc, getDocs } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import { useRolesStore } from '@/stores/roles'
@@ -11,7 +11,15 @@ function getDb() {
 }
 
 export const useEventsStore = defineStore('events', {
+    state: () => ({ loadedOrgId: '', loadedOrgEvents: [] }),
     actions: {
+        async loadOrgEvents(orgId) {
+            if(this.loadedOrgId !== orgId) {
+                this.loadedOrgEvents = []
+                this.loadedOrgEvents = await this.getOrgEvents(orgId)
+                this.loadedOrgId = orgId
+            }
+        },
         async createOrgEvent(data) {
             const schoolYears = useSchoolYearsStore()
             const currentSy = await schoolYears.getCurrentSchoolYear()
@@ -19,7 +27,9 @@ export const useEventsStore = defineStore('events', {
             const db = getDb()
             const colRef = collection(db, 'events')
             const doc = await addDoc(colRef, { ...data, schoolYear: currentSy.id })
-            return { id: doc.id, ...data }
+            const eventRecord = { id: doc.id, ...data }
+            this.loadedOrgEvents.push(eventRecord)
+            return eventRecord
         },
         async getOrgEvents(orgId) {
             const schoolYears = useSchoolYearsStore()
@@ -45,6 +55,7 @@ export const useEventsStore = defineStore('events', {
             return normalizeDoc(eventDoc)
         },
         async addAttendance(event, studentId) {
+            // TODO: move to attendances store
             const db = getDb()
             const id = `attendance_${event.id}_${studentId}`
 
@@ -71,6 +82,7 @@ export const useEventsStore = defineStore('events', {
             return { id, ...data }
         },
         async getAttendances(orgId, eventId) {
+            // TODO: move to attendances store
             const db = getDb()
             const colRef = collection(db, 'attendances')
             const q = query(

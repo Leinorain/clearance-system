@@ -84,7 +84,7 @@
                                     <tbody>
                                         <tr
                                             :class="{'clickable-row': isOrgAdmin || isSysAdmin }"
-                                            v-for="event of orgEvents"
+                                            v-for="event of events.loadedOrgEvents"
                                             @click="$router.push({ name: 'event', params: { orgId: $route.params.orgId, eventId: event.id } })">
                                             <td>{{ dayjs(event.date).format('YYYY-MM-DD') }}</td>
                                             <td>{{ event.name }}</td>
@@ -298,7 +298,6 @@
 
     const addMemberId = ref('')
     const addAdminEmail = ref('')
-    const orgEvents = ref([])
     const orgMemberRoles = ref([])
     const orgAdminRoles = ref([])
 
@@ -341,7 +340,7 @@
     async function loadOrgEvents() {
         const { orgId } = route.params
         try {
-            orgEvents.value = await events.getOrgEvents(orgId)
+            await events.loadOrgEvents(orgId)
         } catch(e) {
             errors.add(`Cannot load org events: ${e.message}`)
         }
@@ -376,12 +375,11 @@
             }
 
             const event = await events.createOrgEvent({ orgId, ...data })
-            orgEvents.value.push(event)
             $event.close()
         } catch(e) {
             $event.error()
             console.error(e)
-            errors.add(`Cannot add event ${e.message}`)
+            errors.add(`Cannot add event: ${e.message}`)
         }
     }
 
