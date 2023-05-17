@@ -5,8 +5,12 @@
             <div class="col-md-8 mb-2">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="ID Number" v-model="addAttendanceInput">
-                    <button class="btn btn-success" @click="addAttendance">
-                        <i class="bi bi-plus-circle"></i>
+                    <button
+                        class="btn btn-success"
+                        :disabled="isAddingAttendance"
+                        @click="addAttendance">
+                        <span v-if="isAddingAttendance" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        <i v-else class="bi bi-plus-circle"></i>
                         Add Attendance
                     </button>
                 </div>
@@ -35,10 +39,10 @@
                 <tbody>
                     <tr v-for="member in membersAttended"> <!-- link -->
                         <td>{{ member.studentId }}</td>
-                        <td>{{ member.lastname }}</td>
-                        <td>{{ member.firstname }}</td>
-                        <td>{{ member.course }}</td>
-                        <td>{{ member.year }}</td>
+                        <td>{{ member.studentLastname }}</td>
+                        <td>{{ member.studentFirstname }}</td>
+                        <td>{{ member.studentCourse }}</td>
+                        <td>{{ member.studentYear }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -66,6 +70,7 @@
             isAddingAttendance.value = true
             const attendance = await events.addAttendance(eventData.value, addAttendanceInput.value)
             membersAttended.value.push(attendance)
+            addAttendanceInput.value = ''
         } catch(e) {
             console.error(e)
             errors.add(`Cannot add attendance: ${e.message}`)

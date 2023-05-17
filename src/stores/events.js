@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { collection, doc, query, where, orderBy, addDoc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, query, where, orderBy, setDoc, getDoc, getDocs } from 'firebase/firestore'
 import { useFirebaseStore } from '@/stores/firebase'
 import { useSchoolYearsStore } from '@/stores/schoolYears'
 import { useRolesStore } from '@/stores/roles'
@@ -45,23 +45,30 @@ export const useEventsStore = defineStore('events', {
             return normalizeDoc(eventDoc)
         },
         async addAttendance(event, studentId) {
+            const db = getDb()
+            const id = `attendance_${event.id}_${studentId}`
+
+            const attendanceDoc = await getDoc(doc(db, 'attendances', id))
+            if(attendanceDoc.exists()) {
+                throw new Error('Attendance already recorded')
+            }
+
             const roles = useRolesStore()
             const memberRole = await roles.getOrgMemberRole(event.orgId, studentId)
-
-            const db = getDb()
-            const colRef = collection(db, 'attendances')
-            const attendanceDoc = await addDoc(colRef, {
+            
+            const data = {
                 eventId: event.id,
+                orgId: event.orgId,
                 eventName: event.name,
                 studentId: memberRole.studentId,
                 studentFirstname: memberRole.firstname,
                 studentLastname: memberRole.lastname,
                 studentCourse: memberRole.course,
-                studentYear: memberRole.year
-            })
-            console.log(attendanceDoc.data)
+                studentYear: memberRole.year,
+            }
 
-            return normalizeDoc(attendanceDoc)
+            await setDoc(doc(db, 'attendances', id), data)
+            return { id, ...data }
         },
         async getAttendances(orgId, eventId) {
             const db = getDb()
