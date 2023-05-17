@@ -1,7 +1,7 @@
 <template>
     <div class="container p-3">
         <h1>{{ eventData.name }}</h1>
-        <div class = "row">
+        <div v-if="isOrgAdmin || isSysAdmin" class = "row">
             <div class="col-md-8 mb-2">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="ID Number" v-model="addAttendanceInput">
@@ -51,19 +51,28 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import { useRoute } from 'vue-router'
     import { useEventsStore } from '@/stores/events'
     import { useErrorsStore } from '@/stores/errors'
+    import { useRolesStore } from '@/stores/roles'
 
     const route = useRoute()
     const events = useEventsStore()
     const errors = useErrorsStore()
-
+    const roles = useRolesStore()
     const eventData = ref({})
     const addAttendanceInput = ref('')
     const isAddingAttendance = ref(false)
     const membersAttended = ref([])
+
+    const isOrgAdmin = computed(() => {
+        return Boolean(roles.orgAdminRoles[route.params.orgId])
+    })
+
+    const isSysAdmin = computed(() => {
+        return roles.isSysAdmin
+    })
 
     async function addAttendance() {
         try {

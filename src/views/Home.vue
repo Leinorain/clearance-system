@@ -1,14 +1,25 @@
 <template>
     <Header :name="auth.userDisplayName"></Header>
     <div
-        v-if="auth.isSystemAdmin"
-        class="d-flex align-items-center m-2">
-        <h1 class="me-auto">Organizations</h1>
-        <button
-            class="btn btn-primary btn-lg"
-            @click="showCreateModal = true">
-            New Org
-        </button>
+    v-if="isSysAdmin" class="container align-items-center">
+        <div class = "row align-items-center">
+            <div class = "col-md-12">
+                <h1 class="me-auto text-center">Organizations</h1>
+            </div>
+        </div>
+        <div class = "row">
+            <div class = "col-md-8">
+            </div>
+            <div class = "col-md-4">
+                <button
+                    class="btn btn-success mb-2 p-2"
+                    style="width:100%"
+                    @click="showCreateModal = true">
+                    <i class="bi bi-plus-square p-2"></i>
+                    Add New Organization
+                </button>
+            </div>
+        </div>
     </div>
     <div class="container mt-2">
         <div v-if="org.isOrgsLoading" class="d-flex justify-content-center pt-3">
@@ -124,6 +135,10 @@ async function loadClearances() {
         isClearancesLoading.value = false
     }
 }
+
+const isSysAdmin = computed(() => {
+        return roles.isSysAdmin
+    })
 
 async function createOrg($event) {
     try {
