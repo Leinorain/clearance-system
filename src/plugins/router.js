@@ -28,6 +28,11 @@ const authenticatedRoutes = [
         component: () => import('@/views/Event.vue')
     },
     {
+        path: '/organizations/:orgId/members/:studentId',
+        name: 'member',
+        component: () => import('@/views/Member.vue')
+    },
+    {
         path: '/email-confirmation',
         name: 'email-confirmation',
         component: () => import('@/views/EmailConfirmation.vue')

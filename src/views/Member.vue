@@ -9,28 +9,25 @@
                 </div>
             </div>
         </div>
-        <div class = "row h-100 justify-content-center align-items-center py-3">
+        <div class ="row py-3">
             
-            <div class = "col-6 d-flex flex-column smallPadding">
-                <div class="form-group text-center">
-                    <label class = "form-control bg-success">
-                        <p class = "text-white h5 studentModalTextHeader">
-                            Fines
-                        </p>
-                    </label>
-                    <input type="text" class="form-control text-center border-success studentModalTextBody" value="100" disabled>
+            <div class="col-5 px-1">
+                <div class="text-center border border-success border-2 rounded">
+                    <p class="w-100 bg-success text-white fw-bold fs-3 mb-0">Fines</p>
+                    <p class="w-100 border-success fs-4 mb-0">100</p>
                 </div>
             </div>
-            
-            <div class = "col-6 d-flex flex-column smallPadding">
-                <div class="form-group text-center">
-                    <label class = "form-control bg-success">
-                        <p class = "text-white h5 studentModalTextHeader">
-                            Status
-                        </p>
-                    </label>
-                    <input type="text" class="form-control text-center text-danger border-success studentModalTextBody" value="Unapproved" disabled>
+
+
+            <div class="col-5 px-1">
+                <div class="text-center border border-success border-2 rounded">
+                    <p class="w-100 bg-success text-white fw-bold fs-3 mb-0">Status</p>
+                    <p class="w-100 border-success mb-0 fs-4 text-danger">Unapproved</p>
                 </div>
+            </div>
+
+            <div class="col-2 px-1">
+                <button type="button" class="btn btn-success btn-lg">Issue Clearance</button>
             </div>
         </div>
         <div class = "row">
@@ -39,23 +36,27 @@
                     <tr>
                         <th scope="col">Date</th>
                         <th scope="col">Event Name</th>
+                        <th scope="col">Attendance</th>
                         <th scope="col">Fines</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class = "clickable-row" data-href='//'> <!-- link -->
-                        <th scope="row">5/3/2023</th>
+                    <tr>
+                        <td>5/3/2023</td>
                         <td>Mass</td>
+                        <td>Present</td>
                         <td>20</td>
                     </tr>
-                    <tr class="clickable-row" data-href='//'> <!-- link -->
-                        <th scope="row">5/4/2023</th>
+                    <tr>
+                        <td>5/4/2023</td>
                         <td>Meeting</td>
+                        <td>Present</td>
                         <td>25</td>
                     </tr>
-                    <tr class = "clickable-row" data-href='//'> <!-- link -->
-                        <th scope="row">5/5/2023</th>
+                    <tr>
+                        <td>5/5/2023</td>
                         <td>Seminar</td>
+                        <td>Present</td>
                         <td>50</td>
                     </tr>
                 </tbody>

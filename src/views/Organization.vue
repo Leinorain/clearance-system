@@ -139,7 +139,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="clickable-row" v-for="member in orgMemberRoles"> <!-- link -->
+                                        <tr
+                                            class="clickable-row"
+                                            v-for="member in orgMemberRoles"
+                                            @click="$router.push({ name: 'member', params: { orgId: $route.params.orgId, studentId: member.studentId } })">
                                             <td>{{ member.studentId }}</td>
                                             <td>{{ member.lastname }}</td>
                                             <td>{{ member.firstname }}</td>
