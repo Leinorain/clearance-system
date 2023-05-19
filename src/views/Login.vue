@@ -154,7 +154,7 @@
                                         <button
                                             type="submit"
                                             class="btn btn-success btn-lg"
-                                            :disabled="isLoggingIn">
+                                            :disabled="isLoggingIn" data-bs-dismiss="modal">
                                             <span v-if="isLoggingIn" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                                             Login
                                         </button>
