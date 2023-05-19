@@ -17,10 +17,12 @@
             </div>
             <!-- office admin no add member button -->
             <div class = "col-md-4 mb-2">
+                <a href = "http://localhost:3000">
                 <button class="btn btn-success" style="width: 100%">
                     <i class="bi bi-person-badge p-1"></i>
                     Start RFID Attendance
                 </button>
+                </a>
             </div>
         </div>
         <!-- office admin no add member button -->
