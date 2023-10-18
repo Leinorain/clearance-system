@@ -3,7 +3,7 @@ const { getFirestore } = require('firebase-admin/firestore')
 const { logger } = require('firebase-functions')
 const { HttpsError } = require('firebase-functions/v2/https')
 
-module.exports = async function addOrgAdminUser(request) {
+module.exports = async function addOrgAdminUser(request) { 
     const { email, orgId } = request.data
 
     const auth = getAuth()

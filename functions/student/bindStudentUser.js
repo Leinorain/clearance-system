@@ -3,7 +3,7 @@ const { getFirestore } = require('firebase-admin/firestore')
 const { logger } = require('firebase-functions')
 const { HttpsError } = require('firebase-functions/v2/https')
 
-module.exports = async function bindStudentUser(request) {
+module.exports = async function bindStudentUser(request) { 
     const { email, studentId } = request.data
 
     const auth = getAuth()
